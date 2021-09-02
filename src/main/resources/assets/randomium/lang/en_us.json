@@ -1,0 +1,7 @@
+{
+  "block.randomium.randomium_ore": "Randomium Ore",
+  "block.randomium.randomium_block": "Randomium Block",
+  "block.randomium.randomium_stabilized": "Stabilized Randomium",
+  "item.randomium.randomium": "Randomium",
+  "message.randomium.description" : "Unstable, morphs when crafted"
+}
