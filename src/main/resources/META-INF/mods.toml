@@ -29,11 +29,12 @@ displayName="Randomium" #mandatory
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="icon.png" #optional
 # A text field displayed in the mod UI
-credits="Thanks for this example mod goes to Java" #optional
+credits="Me" #optional
 # A text field displayed in the mod UI
 authors="MehVahdJukaar" #optional
 # The description text for the mod (multi line!) (#mandatory)
-itemIcon="minecraft:carrot" #catalogue icon
+itemIcon="randomium:randomium" #catalogue icon
+configuredBackground= "randomium:textures/blocks/randomium_ore.png"
 description='''
 ?????
 '''

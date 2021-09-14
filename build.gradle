@@ -22,7 +22,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 
-version = '1.16.5-1.0'
+version = '1.16.5-1.1'
 group = 'net.mehvahdjukaar.randomium'  // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'randomium'
 
@@ -30,7 +30,8 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    //accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     // The mappings can be changed at any time, and must be in the following format.
     // Channel:   Version:
     // snapshot   YYYYMMDD   Snapshot are built nightly.
