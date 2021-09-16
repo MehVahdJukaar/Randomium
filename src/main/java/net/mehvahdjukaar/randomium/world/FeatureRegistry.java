@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.randomium.world;
 
+import com.mojang.serialization.Codec;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
@@ -20,25 +21,12 @@ import java.util.Random;
 
 public class FeatureRegistry {
 
-    public static Feature<OreFeatureConfig> RANDOMIUM_ORE_FEATURE = new Feature<OreFeatureConfig>(OreFeatureConfig.CODEC) {
-        //copy pasted from MCreator. cry about it >:)
-        @Override
-        public boolean place(ISeedReader reader, ChunkGenerator generator, Random random, BlockPos pos, OreFeatureConfig config) {
-            if (reader.getLevel().dimensionType().natural() || reader.getBiome(pos).getBiomeCategory() == Biome.Category.THEEND) {
-                if (config.target.test(reader.getBlockState(pos), random)) {
-                    reader.setBlock(pos, config.state, 2);
-                    return true;
-                }
-            }
-            return false;
-        }
-    };
 
-    public static ConfiguredFeature<?, ?> RANDOMIUM_ORE_CONFIGURED_FEATURE = RANDOMIUM_ORE_FEATURE.configured(
+    public static final ConfiguredFeature<?, ?> RANDOMIUM_ORE_CONFIGURED_FEATURE = Randomium.RANDOMIUM_ORE_FEATURE.get().configured(
             new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, Randomium.RANDOMIUM_ORE.get().defaultBlockState(), 1))
             .range(128).squared().count(Randomium.SPAWN_PER_CHUNK.get());
 
-    public static ConfiguredFeature<?, ?> RANDOMIUM_ORE_END_CONFIGURED_FEATURE = RANDOMIUM_ORE_FEATURE.configured(
+    public static final ConfiguredFeature<?, ?> RANDOMIUM_ORE_END_CONFIGURED_FEATURE = Randomium.RANDOMIUM_ORE_FEATURE.get().configured(
             new OreFeatureConfig(new BlockMatchRuleTest(Blocks.END_STONE), Randomium.RANDOMIUM_END_ORE.get().defaultBlockState(), 1))
             .range(128).squared().count(Randomium.SPAWN_PER_CHUNK_END.get());
 
@@ -60,6 +48,24 @@ public class FeatureRegistry {
         }
         else if (c != Biome.Category.NETHER) {
             event.getGeneration().getFeatures(GenerationStage.Decoration.UNDERGROUND_ORES).add(() -> RANDOMIUM_ORE_CONFIGURED_FEATURE);
+        }
+    }
+
+
+    public static class RandomiumFeature extends Feature<OreFeatureConfig>{
+        public RandomiumFeature(Codec<OreFeatureConfig> codec) {
+            super(codec);
+        }
+
+        @Override
+        public boolean place(ISeedReader reader, ChunkGenerator generator, Random random, BlockPos pos, OreFeatureConfig config) {
+            if (reader.getLevel().dimensionType().natural() || reader.getBiome(pos).getBiomeCategory() == Biome.Category.THEEND) {
+                if (config.target.test(reader.getBlockState(pos), random)) {
+                    reader.setBlock(pos, config.state, 2);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

@@ -6,7 +6,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FallingBlock;
 import net.minecraft.block.SoundType;
-import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
@@ -36,14 +35,6 @@ public class RandomiumOreBlock extends Block {
     }
 
     @Override
-    public void spawnAfterBreak(BlockState state, ServerWorld world, BlockPos pos, ItemStack stack) {
-        //mod compat???
-        if (state.getBlock() != Randomium.RANDOMIUM_ORE.get()) {
-            this.getRandomDrops(state, world, stack, null).forEach((d) -> popResource(world, pos, d));
-        }
-    }
-
-    @Override
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
         return getRandomDrops(state, builder.getLevel(), builder.getOptionalParameter(LootParameters.TOOL),
                 builder.getOptionalParameter(LootParameters.THIS_ENTITY));
@@ -52,18 +43,18 @@ public class RandomiumOreBlock extends Block {
     public List<ItemStack> getRandomDrops(BlockState state, World world, @Nullable ItemStack tool, @Nullable Entity entity) {
 
         ItemStack loot;
-        float percentage = 0.5f;
+        double percentage = Randomium.BASE_DROP_CHANCE.get();
         if (entity instanceof LivingEntity) {
             LivingEntity le = ((LivingEntity) entity);
             if (le.hasEffect(Effects.LUCK)) {
-                percentage += le.getEffect(Effects.LUCK).getAmplifier();
+                percentage += (le.getEffect(Effects.LUCK).getAmplifier()) * Randomium.LUCK_MULTIPLIER.get();
             }
             if (le.hasEffect(Effects.UNLUCK)) {
-                percentage -= le.getEffect(Effects.UNLUCK).getAmplifier();
+                percentage -= (le.getEffect(Effects.UNLUCK).getAmplifier()) * Randomium.LUCK_MULTIPLIER.get();
             }
             if (tool != null) {
                 int fortune = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
-                percentage += 0.2f * fortune;
+                percentage += Randomium.FORTUNE_MULTIPLIER.get() * fortune;
             }
         }
 
@@ -71,7 +62,7 @@ public class RandomiumOreBlock extends Block {
         if (world.random.nextFloat() * 100 <= percentage) {
 
             loot = new ItemStack(Randomium.RANDOMIUM_ITEM.get());
-        } else if (tool != null && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) != 0)
+        } else if (tool != null && Randomium.ALLOW_SILK_TOUCH.get() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) != 0)
             loot = new ItemStack(this.asItem());
         else {
             List<ItemStack> l = Randomium.LOOT.get(world.random.nextInt(Randomium.LOOT.size()));
@@ -93,7 +84,7 @@ public class RandomiumOreBlock extends Block {
     @Override
     public float getExplosionResistance(BlockState state, IBlockReader world, BlockPos pos, Explosion explosion) {
         if (world instanceof World) {
-            return ((World) world).random.nextInt(20);
+            return (float) Math.max(0, (((World) world).random.nextGaussian() * 6 + 8));
         }
         return 6;
     }
@@ -129,29 +120,30 @@ public class RandomiumOreBlock extends Block {
 
     private double total = 0;
     private final NavigableMap<Double, Direction> map = new TreeMap<Double, Direction>() {{
-        put(total += 2d, Direction.UP);
-        put(total += 30, Direction.DOWN);
-        put(total += 10, Direction.NORTH);
-        put(total += 10, Direction.SOUTH);
-        put(total += 10, Direction.EAST);
-        put(total += 10, Direction.WEST);
-        put(total += 8, null);
+        put(total += Randomium.FLY_CHANCE.get(), Direction.UP);
+        put(total += Randomium.FALL_CHANCE.get(), Direction.DOWN);
+        put(total += Randomium.MOVE_CHANCE.get() / 4d, Direction.NORTH);
+        put(total += Randomium.MOVE_CHANCE.get() / 4d, Direction.SOUTH);
+        put(total += Randomium.MOVE_CHANCE.get() / 4d, Direction.EAST);
+        put(total += Randomium.MOVE_CHANCE.get() / 4d, Direction.WEST);
+        put(total += Randomium.TELEPORT_CHANCE.get(), null);
     }};
 
     @Override
     public void attack(BlockState state, World world, BlockPos pos, PlayerEntity entity) {
-        this.excite(state, world, pos,0.83f);
+        ItemStack tool = entity.getUseItem();
+        int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool);
+        double c = i != 0 ? Randomium.SILK_TOUCH_MULTIPLIER.get() : 1;
+        this.excite(state, world, pos, c * Randomium.EXCITE_ON_ATTACK_CHANCE.get());
     }
 
     @Override
-    public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
-        if(world instanceof World) {
-            this.excite(state, (World) world, pos, 0.25f);
-        }
+    public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean moving) {
+        this.excite(state, world, pos, Randomium.EXCITE_ON_BLOCK_UPDATE_CHANCE.get());
     }
 
-    public void excite(BlockState state, World world, BlockPos pos, float chance) {
-        if (!world.isClientSide && world.random.nextFloat() < chance) {
+    public void excite(BlockState state, World world, BlockPos pos, double chance) {
+        if (!world.isClientSide && world.random.nextFloat() < chance / 100f) {
 
             Direction dir = map.higherEntry(world.random.nextDouble() * total).getValue();
 
@@ -179,7 +171,7 @@ public class RandomiumOreBlock extends Block {
                 double d1 = MathHelper.lerp(d0, end.getX(), start.getX()) + (random.nextDouble() - 0.5D) + 0.5D;
                 double d2 = MathHelper.lerp(d0, end.getY(), start.getY()) + random.nextDouble() - 0.5D;
                 double d3 = MathHelper.lerp(d0, end.getZ(), start.getZ()) + (random.nextDouble() - 0.5D) + 0.5D;
-                Minecraft.getInstance().level.addParticle(ParticleTypes.PORTAL, d1, d2, d3, f, f1, f2);
+                world.addParticle(ParticleTypes.PORTAL, d1, d2, d3, f, f1, f2);
             }
             return true;
         }
