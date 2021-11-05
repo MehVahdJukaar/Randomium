@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.randomium.block;
 
 import net.mehvahdjukaar.randomium.Randomium;
+import net.mehvahdjukaar.randomium.configs.CommonConfigs;
 import net.mehvahdjukaar.randomium.entity.MovingBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -43,18 +44,18 @@ public class RandomiumOreBlock extends Block {
     public List<ItemStack> getRandomDrops(BlockState state, World world, @Nullable ItemStack tool, @Nullable Entity entity) {
 
         ItemStack loot;
-        double percentage = Randomium.BASE_DROP_CHANCE.get();
+        double percentage = CommonConfigs.BASE_DROP_CHANCE.get();
         if (entity instanceof LivingEntity) {
             LivingEntity le = ((LivingEntity) entity);
             if (le.hasEffect(Effects.LUCK)) {
-                percentage += (le.getEffect(Effects.LUCK).getAmplifier()) * Randomium.LUCK_MULTIPLIER.get();
+                percentage += (le.getEffect(Effects.LUCK).getAmplifier()) * CommonConfigs.LUCK_MULTIPLIER.get();
             }
             if (le.hasEffect(Effects.UNLUCK)) {
-                percentage -= (le.getEffect(Effects.UNLUCK).getAmplifier()) * Randomium.LUCK_MULTIPLIER.get();
+                percentage -= (le.getEffect(Effects.UNLUCK).getAmplifier()) * CommonConfigs.LUCK_MULTIPLIER.get();
             }
             if (tool != null) {
                 int fortune = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
-                percentage += Randomium.FORTUNE_MULTIPLIER.get() * fortune;
+                percentage += CommonConfigs.FORTUNE_MULTIPLIER.get() * fortune;
             }
         }
 
@@ -62,7 +63,7 @@ public class RandomiumOreBlock extends Block {
         if (world.random.nextFloat() * 100 <= percentage) {
 
             loot = new ItemStack(Randomium.RANDOMIUM_ITEM.get());
-        } else if (tool != null && Randomium.ALLOW_SILK_TOUCH.get() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) != 0)
+        } else if (tool != null && CommonConfigs.ALLOW_SILK_TOUCH.get() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) != 0)
             loot = new ItemStack(this.asItem());
         else {
             List<ItemStack> l = Randomium.LOOT.get(world.random.nextInt(Randomium.LOOT.size()));
@@ -120,26 +121,26 @@ public class RandomiumOreBlock extends Block {
 
     private double total = 0;
     private final NavigableMap<Double, Direction> map = new TreeMap<Double, Direction>() {{
-        put(total += Randomium.FLY_CHANCE.get(), Direction.UP);
-        put(total += Randomium.FALL_CHANCE.get(), Direction.DOWN);
-        put(total += Randomium.MOVE_CHANCE.get() / 4d, Direction.NORTH);
-        put(total += Randomium.MOVE_CHANCE.get() / 4d, Direction.SOUTH);
-        put(total += Randomium.MOVE_CHANCE.get() / 4d, Direction.EAST);
-        put(total += Randomium.MOVE_CHANCE.get() / 4d, Direction.WEST);
-        put(total += Randomium.TELEPORT_CHANCE.get(), null);
+        put(total += CommonConfigs.FLY_CHANCE.get(), Direction.UP);
+        put(total += CommonConfigs.FALL_CHANCE.get(), Direction.DOWN);
+        put(total += CommonConfigs.MOVE_CHANCE.get() / 4d, Direction.NORTH);
+        put(total += CommonConfigs.MOVE_CHANCE.get() / 4d, Direction.SOUTH);
+        put(total += CommonConfigs.MOVE_CHANCE.get() / 4d, Direction.EAST);
+        put(total += CommonConfigs.MOVE_CHANCE.get() / 4d, Direction.WEST);
+        put(total += CommonConfigs.TELEPORT_CHANCE.get(), null);
     }};
 
     @Override
     public void attack(BlockState state, World world, BlockPos pos, PlayerEntity entity) {
         ItemStack tool = entity.getUseItem();
         int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool);
-        double c = i != 0 ? Randomium.SILK_TOUCH_MULTIPLIER.get() : 1;
-        this.excite(state, world, pos, c * Randomium.EXCITE_ON_ATTACK_CHANCE.get());
+        double c = i != 0 ? CommonConfigs.SILK_TOUCH_MULTIPLIER.get() : 1;
+        this.excite(state, world, pos, c * CommonConfigs.EXCITE_ON_ATTACK_CHANCE.get());
     }
 
     @Override
     public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean moving) {
-        this.excite(state, world, pos, Randomium.EXCITE_ON_BLOCK_UPDATE_CHANCE.get());
+        this.excite(state, world, pos, CommonConfigs.EXCITE_ON_BLOCK_UPDATE_CHANCE.get());
     }
 
     public void excite(BlockState state, World world, BlockPos pos, double chance) {

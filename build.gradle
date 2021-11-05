@@ -22,7 +22,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 
-version = '1.16.5-1.1'
+version = '1.16.5-1.5'
 group = 'net.mehvahdjukaar.randomium'  // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'randomium'
 
@@ -156,7 +156,8 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
     // compile against the JEI API but do not include it at runtime
-    implementation fg.deobf("mezz.jei:jei-1.16.5:7.6.1.75:api")
+    //implementation fg.deobf("mezz.jei:jei-1.16.5:7.6.1.75:api")
+    //implementation fg.deobf("mezz.jei:jei-1.16.5:7.7.1.116")
     // at runtime, use the full JEI jar
     //runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
 
@@ -176,7 +177,7 @@ jar {
             "Implementation-Title": project.name,
             "Implementation-Version": "${version}",
             "Implementation-Vendor" :"examplemodsareus",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            //"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
 
         ])
     }
@@ -213,4 +214,69 @@ publishing {
             url "file:///${project.projectDir}/mcmodsrepo"
         }
     }
+}
+
+
+// Loads files in the format {modid}-{version}.jar, MC version optional but picky about hyphens.
+// See the regex pattern.
+def getModVersion(filename) {
+    // println(filename);
+    def pattern = /^(?<modid>[^-]+)(?:-(?<mcversion>[0-9.]+))?(?:-(?<modver>[0-9.\-]+))\.jar$/;
+
+    def matcher = filename =~ pattern
+
+    def found = matcher.find()
+
+    if(found) {
+        def mod = matcher.group("modid");
+
+        // Extract MC version or default
+        def mcVersion = matcher.group("mcversion");
+
+        // Extract mod version
+        def version = matcher.group("modver");
+
+        // println("> mod: ${mod}; mc: ${mcVersion}; version: ${version}");
+
+        if(mcVersion == null)
+            return "${mod}:${mod}:${version}";
+        else
+            return "${mod}:${mod}-${mcVersion}:${version}";
+
+    } else {
+        println(" > not a mod filenamea ")
+        return filename;
+    }
+}
+
+def dev_mods_dir = "mods"
+
+repositories {
+    // Built mods
+    flatDir {
+        dirs dev_mods_dir
+    }
+
+    // Other repositories (standard build gradle)
+}
+
+def dev_mods = fileTree(dev_mods_dir).filter { it -> it.isFile() }.files.name.collect( { getModVersion(it) } )
+
+dependencies {
+    implementation 'org.jetbrains:annotations:19.0.0'
+
+    //mixin stuff fore gradle 5+
+    annotationProcessor 'org.spongepowered:mixin:0.8:processor'
+
+
+    // Snip: Minecraft dependencies, Forge
+
+    // Deobfuscate each dev mod for runtime
+    dev_mods.each {
+        compileOnly fg.deobf(it)
+        runtimeOnly fg.deobf(it)
+    }
+
+    // Other standard gradle dependencies
+
 }

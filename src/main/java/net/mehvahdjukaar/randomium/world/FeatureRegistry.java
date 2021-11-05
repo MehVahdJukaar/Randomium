@@ -2,6 +2,7 @@ package net.mehvahdjukaar.randomium.world;
 
 import com.mojang.serialization.Codec;
 import net.mehvahdjukaar.randomium.Randomium;
+import net.mehvahdjukaar.randomium.configs.CommonConfigs;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -24,11 +25,11 @@ public class FeatureRegistry {
 
     public static final ConfiguredFeature<?, ?> RANDOMIUM_ORE_CONFIGURED_FEATURE = Randomium.RANDOMIUM_ORE_FEATURE.get().configured(
             new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, Randomium.RANDOMIUM_ORE.get().defaultBlockState(), 1))
-            .range(128).squared().count(Randomium.SPAWN_PER_CHUNK.get());
+            .range(128).squared().count(CommonConfigs.SPAWN_PER_CHUNK.get());
 
     public static final ConfiguredFeature<?, ?> RANDOMIUM_ORE_END_CONFIGURED_FEATURE = Randomium.RANDOMIUM_ORE_FEATURE.get().configured(
             new OreFeatureConfig(new BlockMatchRuleTest(Blocks.END_STONE), Randomium.RANDOMIUM_END_ORE.get().defaultBlockState(), 1))
-            .range(128).squared().count(Randomium.SPAWN_PER_CHUNK_END.get());
+            .range(128).squared().count(CommonConfigs.SPAWN_PER_CHUNK_END.get());
 
     public static void init(){
 
