@@ -5,6 +5,7 @@ import net.mehvahdjukaar.randomium.client.DuplicateItemRenderer;
 import net.mehvahdjukaar.randomium.client.MovingBlockEntityRenderer;
 import net.mehvahdjukaar.randomium.configs.CommonConfigs;
 import net.mehvahdjukaar.randomium.entity.MovingBlockEntity;
+import net.mehvahdjukaar.randomium.items.AnyItem;
 import net.mehvahdjukaar.randomium.items.RandomiumItem;
 import net.mehvahdjukaar.randomium.recipes.RandomiumRecipe;
 import net.mehvahdjukaar.randomium.world.FeatureRegistry;
@@ -46,6 +47,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -92,7 +94,7 @@ public class Randomium {
             new RandomiumItem(new Item.Properties().tab(ItemGroup.TAB_MISC).rarity(Rarity.EPIC)));
 
     public static final RegistryObject<Item> DUPLICATE_ITEM = ITEMS.register("any_item", () ->
-            new Item(new Item.Properties().tab(null).setISTER(() -> DuplicateItemRenderer::new)));
+            new AnyItem(new Item.Properties().tab(null).setISTER(() -> DuplicateItemRenderer::new)));
 
     public static final RegistryObject<EntityType<MovingBlockEntity>> MOVING_BLOCK_ENTITY = ENTITIES.register("moving_block", () ->
             EntityType.Builder.<MovingBlockEntity>of(MovingBlockEntity::new,
@@ -145,11 +147,20 @@ public class Randomium {
     public static Tags.IOptionalNamedTag<Item> BLACKLIST = ItemTags.createOptional(res("blacklist"));
     public static Tags.IOptionalNamedTag<Item> WHITELIST = ItemTags.createOptional(res("whitelist"));
 
+    private static final Predicate<Item> VALID_DROP = (i) -> {
+        if (i == Items.AIR) return false;
+        if (i.is(BLACKLIST)) return false;
+        if (i instanceof SpawnEggItem) return false;
+        String name = i.getRegistryName().getPath();
+        return !name.contains("creative") && !name.contains("debug")
+                && !name.contains("developer") && !name.contains("dev_") && !name.contains("_dev");
+    };
+
     @SubscribeEvent
     public void onTagLoad(TagsUpdatedEvent event) {
         if (LOOT.isEmpty()) {
             if (CommonConfigs.LOOT_MODE.get() == ListMode.BLACKLIST) {
-                ForgeRegistries.ITEMS.getValues().stream().filter(i -> i != Items.AIR && !i.is(BLACKLIST) && !i.getRegistryName().getPath().contains("creative")).forEach(i -> {
+                ForgeRegistries.ITEMS.getValues().stream().filter(VALID_DROP).forEach(i -> {
                     NonNullList<ItemStack> temp = NonNullList.create();
                     try {
                         Arrays.stream(ItemGroup.TABS).forEach(t -> i.fillItemCategory(t, temp));

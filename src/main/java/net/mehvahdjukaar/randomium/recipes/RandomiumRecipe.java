@@ -22,13 +22,20 @@ public class RandomiumRecipe extends SpecialRecipe {
     }
 
     private boolean isValid(ItemStack stack) {
+
         CompoundNBT tag = stack.getTag();
         if (tag != null) {
             if (stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) return false;
             String s = tag.toString();
             //can never be too careful
-            if (s.contains("Items:[") || s.contains(Randomium.RANDOMIUM_ITEM.get().getRegistryName().toString()))
+            if (s.contains("Items:[") || s.contains("BlockEntityTag") ||
+                    s.contains("Inventory:[") ||
+                    s.contains("Drawers:[") ||
+                    s.contains(Randomium.RANDOMIUM_ORE_ITEM.get().getRegistryName().toString()) ||
+                    s.contains(Randomium.RANDOMIUM_END_ORE_ITEM.get().getRegistryName().toString()) ||
+                    s.contains(Randomium.RANDOMIUM_ITEM.get().getRegistryName().toString())) {
                 return false;
+            }
         }
         return !stack.getItem().is(Randomium.BLACKLIST);
     }
