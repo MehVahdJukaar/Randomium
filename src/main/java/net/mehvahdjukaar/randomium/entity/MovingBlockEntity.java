@@ -21,7 +21,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Fallable;
-import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
@@ -134,8 +133,8 @@ public class MovingBlockEntity extends FallingBlockEntity implements IEntityAddi
 
                     if (!blockstate.is(Blocks.MOVING_PISTON)) {
                         boolean flag2 = blockstate.canBeReplaced(new DirectionalPlaceContext(this.level, blockpos1, Direction.DOWN, ItemStack.EMPTY, Direction.UP));
-                        boolean flag3 = FallingBlock.isFree(this.level.getBlockState(blockpos1.below()));
-                        boolean flag4 = this.state.canSurvive(this.level, blockpos1) && !flag3;
+                        //boolean hasAirBelow = FallingBlock.isFree(this.level.getBlockState(blockpos1.below()));
+                        boolean flag4 = this.state.canSurvive(this.level, blockpos1);
                         if (flag2 && flag4) {
 
                             if (this.level.setBlock(blockpos1, this.state, 3)) {
