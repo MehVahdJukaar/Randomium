@@ -9,10 +9,11 @@ import net.mehvahdjukaar.randomium.items.RandomiumItem;
 import net.mehvahdjukaar.randomium.recipes.RandomiumDuplicateRecipe;
 import net.mehvahdjukaar.randomium.world.FeatureRegistry;
 import net.minecraft.Util;
-import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.*;
@@ -29,7 +30,6 @@ import net.minecraft.world.level.material.Material;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -132,7 +132,9 @@ public class Randomium {
 
     public static ItemStack getRandomItem(Random random) {
         var list = Randomium.LOOT.get(random.nextInt(Randomium.LOOT.size()));
-        return list.get(random.nextInt(list.size())).copy();
+        ItemStack stack = list.get(random.nextInt(list.size())).copy();
+        stack.setCount(1);
+        return stack;
     }
 
     public static ItemStack getAnyItem() {
@@ -151,12 +153,12 @@ public class Randomium {
     private static final List<ItemStack> SHUFFLED_ANY_ITEM = new ArrayList<>();
     private static final List<SoundType> SOUNDS = new ArrayList<>();
 
-    public static Tags.IOptionalNamedTag<Item> BLACKLIST = ItemTags.createOptional(res("blacklist"));
-    public static Tags.IOptionalNamedTag<Item> WHITELIST = ItemTags.createOptional(res("whitelist"));
+    public static TagKey<Item> BLACKLIST = ItemTags.create(res("blacklist"));
+    public static TagKey<Item> WHITELIST = ItemTags.create(res("whitelist"));
 
     private static final Predicate<Item> VALID_DROP = (i) -> {
         if (i == Items.AIR) return false;
-        if (BLACKLIST.contains(i)) return false;
+        if (i.builtInRegistryHolder().is(BLACKLIST)) return false;
         if (i instanceof SpawnEggItem) return false;
         ResourceLocation reg = i.getRegistryName();
         if(CommonConfigs.MOD_BLACKLIST.get().contains(reg.getNamespace())) return false;
@@ -188,7 +190,7 @@ public class Randomium {
                 //lucky
                 LOOT.add(Collections.singletonList(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LUCK)));
             } else {
-                WHITELIST.getValues().stream().map(Item::getDefaultInstance).forEach(i -> LOOT.add(Collections.singletonList(i)));
+                Registry.ITEM.getTagOrEmpty(WHITELIST).forEach(i -> LOOT.add(Collections.singletonList(i.value().getDefaultInstance())));
             }
         }
         SHUFFLED_ANY_ITEM.clear();

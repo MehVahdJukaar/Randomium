@@ -10,24 +10,19 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Fallable;
+import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
@@ -44,7 +39,14 @@ public class MovingBlockEntity extends FallingBlockEntity implements IEntityAddi
     }
 
     public MovingBlockEntity(Level level, double x, double y, double z, BlockState state, Direction gravityDirection) {
-        super(level, x, y, z, state);
+        super(Randomium.MOVING_BLOCK_ENTITY.get(), level);
+        this.blocksBuilding = true;
+        this.setPos(x, y, z);
+        this.setDeltaMovement(Vec3.ZERO);
+        this.xo = x;
+        this.yo = y;
+        this.zo = z;
+        this.setStartPos(this.blockPosition());
         this.gravityDirection = gravityDirection;
         this.state = state;
     }
@@ -97,13 +99,7 @@ public class MovingBlockEntity extends FallingBlockEntity implements IEntityAddi
     public void tick() {
         if (this.state.isAir()) {
             this.discard();
-        } else if (this.level.isClientSide && this.removeAtMillis > 0L) {
-            if (System.currentTimeMillis() >= this.removeAtMillis) {
-                //damn mojang. hacky but should work. killed instead of discarded so leve.shouldDelayFallingBlockEntityRemova returns false and we can access Entity super method
-                super.setRemoved(RemovalReason.KILLED);
-            }
-
-        } else {
+        }else {
             Block block = this.state.getBlock();
             if (this.time++ == 0) {
                 BlockPos blockpos = this.blockPosition();
