@@ -1,72 +1,58 @@
 package net.mehvahdjukaar.randomium.world;
 
-import com.mojang.serialization.Codec;
+import com.google.common.collect.ImmutableList;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.mehvahdjukaar.randomium.configs.CommonConfigs;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.WorldGenRegistries;
-import net.minecraft.world.ISeedReader;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.OreFeatureConfig;
-import net.minecraft.world.gen.feature.template.BlockMatchRuleTest;
+import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.data.worldgen.features.OreFeatures;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
+import net.minecraft.world.level.levelgen.placement.*;
+import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTest;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 
-import java.util.Random;
+import java.util.List;
 
 public class FeatureRegistry {
 
+    public static final ImmutableList<OreConfiguration.TargetBlockState> RANDOMIUM_TARGET_LIST = ImmutableList.of(
+            OreConfiguration.target(OreFeatures.STONE_ORE_REPLACEABLES, Randomium.RANDOMIUM_ORE.get().defaultBlockState()),
+            OreConfiguration.target(new BlockMatchTest(Blocks.END_STONE), Randomium.RANDOMIUM_ORE_END.get().defaultBlockState()),
+            OreConfiguration.target(OreFeatures.DEEPSLATE_ORE_REPLACEABLES, Randomium.RANDOMIUM_ORE_DEEP.get().defaultBlockState()));
 
-    public static final ConfiguredFeature<?, ?> RANDOMIUM_ORE_CONFIGURED_FEATURE = Randomium.RANDOMIUM_ORE_FEATURE.get().configured(
-            new OreFeatureConfig(OreFeatureConfig.FillerBlockType.NATURAL_STONE, Randomium.RANDOMIUM_ORE.get().defaultBlockState(), 1))
-            .range(128).squared().count(CommonConfigs.SPAWN_PER_CHUNK.get());
+    public static final ConfiguredFeature<?, ?> RANDOMIUM_ORE_CONFIGURED = Feature.ORE.configured(
+            new OreConfiguration(RANDOMIUM_TARGET_LIST, 3));
 
-    public static final ConfiguredFeature<?, ?> RANDOMIUM_ORE_END_CONFIGURED_FEATURE = Randomium.RANDOMIUM_ORE_FEATURE.get().configured(
-            new OreFeatureConfig(new BlockMatchRuleTest(Blocks.END_STONE), Randomium.RANDOMIUM_END_ORE.get().defaultBlockState(), 1))
-            .range(128).squared().count(CommonConfigs.SPAWN_PER_CHUNK_END.get());
+    public static final PlacedFeature RANDOMIUM_ORE_PLACED = RANDOMIUM_ORE_CONFIGURED.placed(
+            commonOrePlacement(CommonConfigs.SPAWN_PER_CHUNK.get(), HeightRangePlacement.uniform(VerticalAnchor.aboveBottom(6),
+                    VerticalAnchor.absolute(152))));
 
-    public static void init(){
-
-        Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(Randomium.MOD_ID, "randomium_ore"),
-                RANDOMIUM_ORE_CONFIGURED_FEATURE);
-
-        Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(Randomium.MOD_ID, "randomium_ore_end"),
-                RANDOMIUM_ORE_END_CONFIGURED_FEATURE);
-
+    private static List<PlacementModifier> orePlacement(PlacementModifier modifier, PlacementModifier modifier1) {
+        return List.of(modifier, InSquarePlacement.spread(), modifier1, BiomeFilter.biome());
     }
 
-    //@SubscribeEvent
+    private static List<PlacementModifier> commonOrePlacement(int attempts, PlacementModifier distribution) {
+        return orePlacement(CountPlacement.of(attempts), distribution);
+    }
+
+
+    public static void init() {
+
+        Registry.register(BuiltinRegistries.CONFIGURED_FEATURE, Randomium.res("ore_randomium"), RANDOMIUM_ORE_CONFIGURED);
+        Registry.register(BuiltinRegistries.PLACED_FEATURE, Randomium.res("ore_randomium"), RANDOMIUM_ORE_PLACED);
+    }
+
     public static void addFeatureToBiomes(BiomeLoadingEvent event) {
-        Biome.Category c = event.getCategory();
-        if(c == Biome.Category.THEEND){
-            event.getGeneration().getFeatures(GenerationStage.Decoration.UNDERGROUND_ORES).add(() -> RANDOMIUM_ORE_END_CONFIGURED_FEATURE);
-        }
-        else if (c != Biome.Category.NETHER) {
-            event.getGeneration().getFeatures(GenerationStage.Decoration.UNDERGROUND_ORES).add(() -> RANDOMIUM_ORE_CONFIGURED_FEATURE);
+        Biome.BiomeCategory c = event.getCategory();
+        if (c != Biome.BiomeCategory.NETHER) {
+            event.getGeneration().getFeatures(GenerationStep.Decoration.UNDERGROUND_ORES).add(() -> RANDOMIUM_ORE_PLACED);
         }
     }
 
-
-    public static class RandomiumFeature extends Feature<OreFeatureConfig>{
-        public RandomiumFeature(Codec<OreFeatureConfig> codec) {
-            super(codec);
-        }
-
-        @Override
-        public boolean place(ISeedReader reader, ChunkGenerator generator, Random random, BlockPos pos, OreFeatureConfig config) {
-            if (reader.getLevel().dimensionType().natural() || reader.getBiome(pos).getBiomeCategory() == Biome.Category.THEEND) {
-                if (config.target.test(reader.getBlockState(pos), random)) {
-                    reader.setBlock(pos, config.state, 2);
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
 }

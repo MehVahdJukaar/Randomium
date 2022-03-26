@@ -1,16 +1,24 @@
 package net.mehvahdjukaar.randomium.jei;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaRecipeCategoryUid;
+import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
 import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import net.mehvahdjukaar.randomium.Randomium;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapelessRecipe;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.mehvahdjukaar.randomium.recipes.RandomiumDuplicateRecipe;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +34,17 @@ public class JEIPlugin implements IModPlugin {
     }
 
     @Override
+    public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
+        registration.getCraftingCategory().addCategoryExtension(RandomiumDuplicateRecipe.class, DuplicateRecipeExtension::new);
+    }
+
+    @Override
     public void registerRecipes(IRecipeRegistration registry) {
         registry.addRecipes(createRandomiumDuplicateRecipe(), VanillaRecipeCategoryUid.CRAFTING);
     }
 
-    public static List<IRecipe<?>> createRandomiumDuplicateRecipe() {
-        List<IRecipe<?>> recipes = new ArrayList<>();
+    public static List<Recipe<?>> createRandomiumDuplicateRecipe() {
+        List<Recipe<?>> recipes = new ArrayList<>();
         String group = "randomium.jei.duplicate";
 
         Ingredient randomium = Ingredient.of(Randomium.RANDOMIUM_ITEM.get().getDefaultInstance());
@@ -43,6 +56,8 @@ public class JEIPlugin implements IModPlugin {
 
         return recipes;
     }
+
+
 
 
 }

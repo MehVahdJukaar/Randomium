@@ -1,55 +1,52 @@
 package net.mehvahdjukaar.randomium;
 
 import net.mehvahdjukaar.randomium.block.RandomiumOreBlock;
-import net.mehvahdjukaar.randomium.client.DuplicateItemRenderer;
 import net.mehvahdjukaar.randomium.client.MovingBlockEntityRenderer;
 import net.mehvahdjukaar.randomium.configs.CommonConfigs;
 import net.mehvahdjukaar.randomium.entity.MovingBlockEntity;
 import net.mehvahdjukaar.randomium.items.AnyItem;
 import net.mehvahdjukaar.randomium.items.RandomiumItem;
-import net.mehvahdjukaar.randomium.recipes.RandomiumRecipe;
+import net.mehvahdjukaar.randomium.recipes.RandomiumDuplicateRecipe;
 import net.mehvahdjukaar.randomium.world.FeatureRegistry;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.*;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.SpecialRecipeSerializer;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.potion.Potions;
+import net.minecraft.Util;
+import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.OreFeatureConfig;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.material.Material;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 
 @Mod(Randomium.MOD_ID)
 public class Randomium {
@@ -66,50 +63,51 @@ public class Randomium {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MOD_ID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, MOD_ID);
-    public static final DeferredRegister<IRecipeSerializer<?>> RECIPES = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MOD_ID);
+    public static final DeferredRegister<RecipeSerializer<?>> RECIPES = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, MOD_ID);
     public static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, MOD_ID);
 
 
     public static final RegistryObject<Block> RANDOMIUM_ORE = BLOCKS.register("randomium_ore", () ->
-            new RandomiumOreBlock(AbstractBlock.Properties.of(Material.STONE)
+            new RandomiumOreBlock(BlockBehaviour.Properties.of(Material.STONE)
                     .requiresCorrectToolForDrops()
-                    .strength(4.0F, 3.0F)
-                    .harvestTool(ToolType.PICKAXE)
-                    .harvestLevel(2)));
+                    .strength(4.0F, 3.0F)));
+
+    public static final RegistryObject<Block> RANDOMIUM_ORE_DEEP = BLOCKS.register("randomium_ore_deepslate", () ->
+            new RandomiumOreBlock(BlockBehaviour.Properties.copy(Blocks.DEEPSLATE)
+                    .requiresCorrectToolForDrops()
+                    .strength(5.25F, 3.0F)));
+
+    public static final RegistryObject<Item> RANDOMIUM_ORE_DEEP_ITEM = ITEMS.register("randomium_ore_deepslate", () ->
+            new BlockItem(RANDOMIUM_ORE_DEEP.get(), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
 
     public static final RegistryObject<Item> RANDOMIUM_ORE_ITEM = ITEMS.register("randomium_ore", () ->
-            new BlockItem(RANDOMIUM_ORE.get(), new Item.Properties().tab(ItemGroup.TAB_BUILDING_BLOCKS)));
+            new BlockItem(RANDOMIUM_ORE.get(), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
 
-    public static final RegistryObject<Block> RANDOMIUM_END_ORE = BLOCKS.register("randomium_ore_end", () ->
-            new RandomiumOreBlock(AbstractBlock.Properties.copy(Blocks.END_STONE)
+    public static final RegistryObject<Block> RANDOMIUM_ORE_END = BLOCKS.register("randomium_ore_end", () ->
+            new RandomiumOreBlock(BlockBehaviour.Properties.copy(Blocks.END_STONE)
                     .requiresCorrectToolForDrops()
-                    .strength(4.0F, 3.0F)
-                    .harvestTool(ToolType.PICKAXE)
-                    .harvestLevel(2)));
+                    .strength(4.0F, 3.0F)));
 
     public static final RegistryObject<Item> RANDOMIUM_END_ORE_ITEM = ITEMS.register("randomium_ore_end", () ->
-            new BlockItem(RANDOMIUM_END_ORE.get(), new Item.Properties().tab(ItemGroup.TAB_BUILDING_BLOCKS)));
+            new BlockItem(RANDOMIUM_ORE_END.get(), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
 
     public static final RegistryObject<Item> RANDOMIUM_ITEM = ITEMS.register("randomium", () ->
-            new RandomiumItem(new Item.Properties().tab(ItemGroup.TAB_MISC).rarity(Rarity.EPIC)));
+            new RandomiumItem(new Item.Properties().tab(CreativeModeTab.TAB_MISC).rarity(Rarity.EPIC)));
 
     public static final RegistryObject<Item> DUPLICATE_ITEM = ITEMS.register("any_item", () ->
-            new AnyItem(new Item.Properties().tab(null).setISTER(() -> DuplicateItemRenderer::new)));
+            new AnyItem(new Item.Properties().tab(null)));
 
     public static final RegistryObject<EntityType<MovingBlockEntity>> MOVING_BLOCK_ENTITY = ENTITIES.register("moving_block", () ->
             EntityType.Builder.<MovingBlockEntity>of(MovingBlockEntity::new,
-                            EntityClassification.MISC)
+                            MobCategory.MISC)
                     .sized(0.98F, 0.98F)
                     .clientTrackingRange(10)
                     .updateInterval(20)
                     .setCustomClientFactory(MovingBlockEntity::new)
                     .build("moving_block"));
 
-    public static final RegistryObject<IRecipeSerializer<?>> RANDOMIUM_CLONE_RECIPE = RECIPES.register("randomium_clone", () ->
-            new SpecialRecipeSerializer<>(RandomiumRecipe::new));
-
-    public static final RegistryObject<Feature<OreFeatureConfig>> RANDOMIUM_ORE_FEATURE = Randomium.FEATURES.register("randomium_ore",
-            () -> new FeatureRegistry.RandomiumFeature(OreFeatureConfig.CODEC));
+    public static final RegistryObject<RecipeSerializer<?>> RANDOMIUM_CLONE_RECIPE = RECIPES.register("randomium_clone", () ->
+            new SimpleRecipeSerializer<>(RandomiumDuplicateRecipe::new));
 
 
     public enum ListMode {BLACKLIST, WHITELIST}
@@ -127,47 +125,66 @@ public class Randomium {
 
         // Register the setup method for modloading
         bus.addListener(EventPriority.LOWEST, this::setup);
-        bus.addListener(this::doClientStuff);
+        bus.addListener(this::entityRenderers);
 
-        // Register ourselves for server and other game events we are interested in
-        //MinecraftForge.EVENT_BUS.addListener(FeatureRegistry::addFeatureToBiomes);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @SubscribeEvent
-    public void addFeatureToBiomes(BiomeLoadingEvent event) {
-        FeatureRegistry.addFeatureToBiomes(event);
+    public static ItemStack getRandomItem(Random random) {
+        var list = Randomium.LOOT.get(random.nextInt(Randomium.LOOT.size()));
+        return list.get(random.nextInt(list.size())).copy();
     }
 
+    public static ItemStack getAnyItem() {
+        int size = Randomium.SHUFFLED_ANY_ITEM.size();
+        int time = (int) (Util.getMillis() / 500L);
+        return Randomium.SHUFFLED_ANY_ITEM.get(time % size);
+    }
+
+    public static SoundType getRandomSound(Random random){
+        return SOUNDS.get(random.nextInt(Randomium.SOUNDS.size()));
+    }
+
+
     //these are meant to be copied of course. Needed cause they hold tags
-    public static final List<List<ItemStack>> LOOT = new ArrayList<>();
-    public static final List<ItemStack> SHUFFLED_ANY_ITEM = new ArrayList<>();
-    public static final List<SoundType> SOUNDS = new ArrayList<>();
+    private static final List<List<ItemStack>> LOOT = new ArrayList<>();
+    private static final List<ItemStack> SHUFFLED_ANY_ITEM = new ArrayList<>();
+    private static final List<SoundType> SOUNDS = new ArrayList<>();
 
     public static Tags.IOptionalNamedTag<Item> BLACKLIST = ItemTags.createOptional(res("blacklist"));
     public static Tags.IOptionalNamedTag<Item> WHITELIST = ItemTags.createOptional(res("whitelist"));
 
     private static final Predicate<Item> VALID_DROP = (i) -> {
         if (i == Items.AIR) return false;
-        if (i.is(BLACKLIST)) return false;
+        if (BLACKLIST.contains(i)) return false;
         if (i instanceof SpawnEggItem) return false;
-        String name = i.getRegistryName().getPath();
+        ResourceLocation reg = i.getRegistryName();
+        if(CommonConfigs.MOD_BLACKLIST.get().contains(reg.getNamespace())) return false;
+        String name = reg.getPath();
         return !name.contains("creative") && !name.contains("debug")
                 && !name.contains("developer") && !name.contains("dev_") && !name.contains("_dev");
     };
+
+
+    @SubscribeEvent
+    public void addFeatureToBiomes(BiomeLoadingEvent event) {
+        FeatureRegistry.addFeatureToBiomes(event);
+    }
 
     @SubscribeEvent
     public void onTagLoad(TagsUpdatedEvent event) {
         if (LOOT.isEmpty()) {
             if (CommonConfigs.LOOT_MODE.get() == ListMode.BLACKLIST) {
-                ForgeRegistries.ITEMS.getValues().stream().filter(VALID_DROP).forEach(i -> {
-                    NonNullList<ItemStack> temp = NonNullList.create();
-                    try {
-                        Arrays.stream(ItemGroup.TABS).forEach(t -> i.fillItemCategory(t, temp));
-                        if (!temp.isEmpty()) LOOT.add(temp);
-                    } catch (Exception ignored) {
-                    }
-                });
+                ForgeRegistries.ITEMS.getValues().stream()
+                        .filter(VALID_DROP)
+                        .forEach(i -> {
+                            NonNullList<ItemStack> temp = NonNullList.create();
+                            try {
+                                Arrays.stream(CreativeModeTab.TABS).forEach(t -> i.fillItemCategory(t, temp));
+                                if (!temp.isEmpty()) LOOT.add(temp);
+                            } catch (Exception ignored) {
+                            }
+                        });
                 //lucky
                 LOOT.add(Collections.singletonList(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LUCK)));
             } else {
@@ -187,9 +204,9 @@ public class Randomium {
                 .filter(s -> !SOUNDS.contains(s)).forEach(SOUNDS::add);
     }
 
-    private void doClientStuff(final FMLClientSetupEvent event) {
+    public void entityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         // do something that can only be done on the client
-        RenderingRegistry.registerEntityRenderingHandler(MOVING_BLOCK_ENTITY.get(), MovingBlockEntityRenderer::new);
+        event.registerEntityRenderer(MOVING_BLOCK_ENTITY.get(), MovingBlockEntityRenderer::new);
     }
 
     @SubscribeEvent
