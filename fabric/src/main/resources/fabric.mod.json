@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "randomium",
+  "version": "${version}",
+  "name": "Randomium",
+  "description": "?????",
+  "authors": [
+    "Mehvahdjukaar, Plantkillable"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "ARR",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.mehvahdjukaar.randomium.fabric.RandomiumFabric"
+    ],
+    "client": [
+      "net.mehvahdjukaar.randomium.fabric.RandomiumFabricClient"
+    ],
+    "modmenu": [
+      "net.mehvahdjukaar.randomium.modMenu.ModMenuCompat"
+    ]
+  },
+  "mixins": [
+    "${mod_id}.mixins.json",
+    "${mod_id}-common.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=1.19",
+    "moonlight": ">=2.0.0"
+  }
+}

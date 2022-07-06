@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": "randomium:ore_randomium",
+  "step": "underground_ores"
+}

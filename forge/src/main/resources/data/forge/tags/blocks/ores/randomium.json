@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "randomium:randomium_ore",
+    "randomium:randomium_ore_deepslate",
+    "randomium:randomium_ore_end"
+  ]
+}
