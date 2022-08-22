@@ -18,9 +18,6 @@
     "main": [
       "net.mehvahdjukaar.randomium.fabric.RandomiumFabric"
     ],
-    "client": [
-      "net.mehvahdjukaar.randomium.fabric.RandomiumFabricClient"
-    ],
     "modmenu": [
       "net.mehvahdjukaar.randomium.modMenu.ModMenuCompat"
     ]
@@ -32,6 +29,6 @@
   "depends": {
     "fabric": "*",
     "minecraft": ">=1.19",
-    "moonlight": ">=2.0.0"
+    "moonlight": ">=1.19-2.0.2"
   }
 }

@@ -17,6 +17,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTes
 
 import java.util.List;
 
+//load after registration
 public class ModFeatures {
 
     public static final List<OreConfiguration.TargetBlockState> RANDOMIUM_TARGET_LIST = ImmutableList.of(
@@ -44,7 +45,7 @@ public class ModFeatures {
             commonOrePlacement(CommonConfigs.SPAWN_PER_CHUNK.get(), HeightRangePlacement.uniform(VerticalAnchor.aboveBottom(6),
                     VerticalAnchor.absolute(152))));
 
-    public static void init() {
+    public static void setup() {
     }
 
 

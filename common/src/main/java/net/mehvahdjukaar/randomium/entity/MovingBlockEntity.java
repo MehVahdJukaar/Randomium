@@ -1,7 +1,7 @@
 package net.mehvahdjukaar.randomium.entity;
 
-import net.mehvahdjukaar.moonlight.network.IExtraClientSpawnData;
-import net.mehvahdjukaar.moonlight.platform.PlatformHelper;
+import net.mehvahdjukaar.moonlight.api.entity.IExtraClientSpawnData;
+import net.mehvahdjukaar.moonlight.api.platform.PlatformHelper;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

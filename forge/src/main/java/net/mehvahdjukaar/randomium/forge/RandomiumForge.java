@@ -1,8 +1,8 @@
 package net.mehvahdjukaar.randomium.forge;
 
-import net.mehvahdjukaar.moonlight.Moonlight;
-import net.mehvahdjukaar.moonlight.platform.registry.RegHelper;
+import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.randomium.Randomium;
+import net.mehvahdjukaar.randomium.RandomiumClient;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -27,7 +27,7 @@ public class RandomiumForge {
 
         Randomium.commonInit();
 
-
+        RandomiumClient.init();
 
     }
 
@@ -43,7 +43,6 @@ public class RandomiumForge {
 
     public static void registerAdditional(RegisterEvent event) {
         if (!event.getRegistryKey().equals(ForgeRegistries.ITEMS.getRegistryKey())) return;
-        Moonlight.commonRegistration();
     }
 
 

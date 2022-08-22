@@ -1,8 +1,7 @@
 package net.mehvahdjukaar.randomium;
 
-import net.mehvahdjukaar.moonlight.platform.PlatformHelper;
-import net.mehvahdjukaar.moonlight.platform.registry.RegHelper;
-import net.mehvahdjukaar.moonlight.util.Utils;
+import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.randomium.block.RandomiumOreBlock;
 import net.mehvahdjukaar.randomium.configs.CommonConfigs;
 import net.mehvahdjukaar.randomium.entity.MovingBlockEntity;
@@ -62,7 +61,6 @@ public class Randomium {
                     .strength(4.0F, 3.0F)));
 
 
-
     public static final Supplier<Item> RANDOMIUM_ORE_ITEM = RegHelper.registerItem(res("randomium_ore"), () ->
             new BlockItem(RANDOMIUM_ORE.get(), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
 
@@ -93,17 +91,11 @@ public class Randomium {
     public enum ListMode {BLACKLIST, WHITELIST}
 
     public static void commonInit() {
-
         CommonConfigs.init();
-
-        //forge client entry point
-        if (PlatformHelper.getEnv().isClient() && PlatformHelper.getPlatform().isForge()) {
-            RandomiumClient.init();
-        }
     }
 
     public static void commonSetup() {
-       // ModFeatures.init();
+        ModFeatures.setup(); //needs to be after registration to have block access
 
         //yay for oneliners
         for (var block : Registry.BLOCK) {
@@ -132,6 +124,7 @@ public class Randomium {
         SHUFFLED_ANY_ITEM.clear();
         SHUFFLED_ANY_ITEM.addAll(LOOT.stream().map(l -> l.get(0)).toList());
         Collections.shuffle(SHUFFLED_ANY_ITEM);
+
     }
 
     public static ItemStack getRandomItem(RandomSource random) {
