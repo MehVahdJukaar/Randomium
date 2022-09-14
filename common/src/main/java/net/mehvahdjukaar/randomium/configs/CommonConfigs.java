@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.randomium.configs;
 
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
+import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigSpec;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
 import net.mehvahdjukaar.randomium.Randomium;
 
@@ -9,7 +10,7 @@ import java.util.function.Supplier;
 
 public class CommonConfigs {
 
-    public static Object SPEC;
+    public static ConfigSpec SPEC;
 
     public static Supplier<Integer> SPAWN_PER_CHUNK;
 
