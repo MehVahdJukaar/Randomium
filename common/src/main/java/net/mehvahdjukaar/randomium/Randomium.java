@@ -92,10 +92,10 @@ public class Randomium {
 
     public static void commonInit() {
         CommonConfigs.init();
+        ModFeatures.init();
     }
 
     public static void commonSetup() {
-        ModFeatures.setup(); //needs to be after registration to have block access
 
         //yay for oneliners
         for (var block : Registry.BLOCK) {

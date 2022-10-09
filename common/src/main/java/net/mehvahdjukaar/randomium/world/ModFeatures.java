@@ -1,13 +1,11 @@
 package net.mehvahdjukaar.randomium.world;
 
 import com.google.common.collect.ImmutableList;
+import net.mehvahdjukaar.moonlight.api.misc.RegSupplier;
+import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.mehvahdjukaar.randomium.configs.CommonConfigs;
-import net.minecraft.core.Holder;
-import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.features.OreFeatures;
-import net.minecraft.data.worldgen.placement.PlacementUtils;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
@@ -21,11 +19,12 @@ import java.util.List;
 //load after registration
 public class ModFeatures {
 
-    public static final List<OreConfiguration.TargetBlockState> RANDOMIUM_TARGET_LIST = ImmutableList.of(
-            OreConfiguration.target(OreFeatures.STONE_ORE_REPLACEABLES, Randomium.RANDOMIUM_ORE.get().defaultBlockState()),
-            OreConfiguration.target(new BlockMatchTest(Blocks.END_STONE), Randomium.RANDOMIUM_ORE_END.get().defaultBlockState()),
-            OreConfiguration.target(OreFeatures.DEEPSLATE_ORE_REPLACEABLES, Randomium.RANDOMIUM_ORE_DEEP.get().defaultBlockState()));
-
+    private static List<OreConfiguration.TargetBlockState> getTargetList() {
+        return ImmutableList.of(
+                OreConfiguration.target(OreFeatures.STONE_ORE_REPLACEABLES, Randomium.RANDOMIUM_ORE.get().defaultBlockState()),
+                OreConfiguration.target(new BlockMatchTest(Blocks.END_STONE), Randomium.RANDOMIUM_ORE_END.get().defaultBlockState()),
+                OreConfiguration.target(OreFeatures.DEEPSLATE_ORE_REPLACEABLES, Randomium.RANDOMIUM_ORE_DEEP.get().defaultBlockState()));
+    }
 
     private static List<PlacementModifier> orePlacement(PlacementModifier modifier, PlacementModifier modifier1) {
         return List.of(modifier, InSquarePlacement.spread(), modifier1, BiomeFilter.biome());
@@ -36,17 +35,17 @@ public class ModFeatures {
     }
 
 
-    public static final Holder<ConfiguredFeature<OreConfiguration, ?>> RANDOMIUM_ORE_CONFIGURED = FeatureUtils.register(
-            "randomium:ore_randomium",
-            Feature.ORE, new OreConfiguration(RANDOMIUM_TARGET_LIST, 3));
+    public static final RegSupplier<ConfiguredFeature<OreConfiguration, Feature<OreConfiguration>>> RANDOMIUM_ORE_CONFIGURED =
+            RegHelper.registerConfiguredFeature(Randomium.res("ore_randomium"),
+                    () -> Feature.ORE, () -> new OreConfiguration(getTargetList(), 3));
 
-    public static final Holder<PlacedFeature> RANDOMIUM_ORE_PLACED = PlacementUtils.register(
-            "randomium:ore_randomium",
-            RANDOMIUM_ORE_CONFIGURED,
-            commonOrePlacement(CommonConfigs.SPAWN_PER_CHUNK.get(), HeightRangePlacement.uniform(VerticalAnchor.aboveBottom(6),
-                    VerticalAnchor.absolute(152))));
+    public static final RegSupplier<PlacedFeature> RANDOMIUM_ORE_PLACED =
+            RegHelper.registerPlacedFeature(Randomium.res("ore_randomium"),
+                    RANDOMIUM_ORE_CONFIGURED,
+                    () -> commonOrePlacement(CommonConfigs.SPAWN_PER_CHUNK.get(), HeightRangePlacement.uniform(VerticalAnchor.aboveBottom(6),
+                            VerticalAnchor.absolute(152))));
 
-    public static void setup() {
+    public static void init() {
     }
 
 

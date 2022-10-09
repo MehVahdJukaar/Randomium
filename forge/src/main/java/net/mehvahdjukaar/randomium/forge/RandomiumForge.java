@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.randomium.forge;
 
+import net.mehvahdjukaar.moonlight.api.platform.PlatformHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.mehvahdjukaar.randomium.RandomiumClient;
@@ -26,8 +27,9 @@ public class RandomiumForge {
         bus.addListener(RandomiumForge::init);
 
         Randomium.commonInit();
-
-        RandomiumClient.init();
+        if (PlatformHelper.getEnv().isClient()) {
+            RandomiumClient.init();
+        }
 
     }
 
@@ -36,14 +38,7 @@ public class RandomiumForge {
 
 
     public static void init(final FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-            Randomium.commonSetup();
-        });
+        event.enqueueWork(Randomium::commonSetup);
     }
-
-    public static void registerAdditional(RegisterEvent event) {
-        if (!event.getRegistryKey().equals(ForgeRegistries.ITEMS.getRegistryKey())) return;
-    }
-
 
 }

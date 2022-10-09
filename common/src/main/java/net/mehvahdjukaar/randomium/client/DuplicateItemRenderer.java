@@ -14,6 +14,9 @@ import net.minecraft.world.item.ItemStack;
 
 public class DuplicateItemRenderer extends ItemStackRenderer {
 
+    public DuplicateItemRenderer(){
+    }
+
     @Override
     public void renderByItem(ItemStack stack, ItemTransforms.TransformType transformType,
                              PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {

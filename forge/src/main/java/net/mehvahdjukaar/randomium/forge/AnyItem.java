@@ -7,6 +7,7 @@ import net.mehvahdjukaar.randomium.client.DuplicateItemRenderer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -29,7 +30,7 @@ public class AnyItem extends Item implements ICustomItemRendererProvider {
     }
 
     @Override
-    public Rarity getRarity(ItemStack p_77613_1_) {
+    public @NotNull Rarity getRarity(ItemStack p_77613_1_) {
         return Randomium.getAnyItem().getRarity();
     }
 

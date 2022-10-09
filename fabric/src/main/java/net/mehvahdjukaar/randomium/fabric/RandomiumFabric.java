@@ -28,10 +28,10 @@ public class RandomiumFabric implements ModInitializer {
         Randomium.commonSetup();
         BiomeModifications.addFeature(BiomeSelectors.tag(BiomeTags.IS_OVERWORLD),
                 GenerationStep.Decoration.UNDERGROUND_ORES,
-                ModFeatures.RANDOMIUM_ORE_PLACED.unwrapKey().get());
+                ModFeatures.RANDOMIUM_ORE_PLACED.getHolder().unwrapKey().get());
         BiomeModifications.addFeature(BiomeSelectors.tag(BiomeTags.IS_END),
                 GenerationStep.Decoration.UNDERGROUND_ORES,
-                ModFeatures.RANDOMIUM_ORE_PLACED.unwrapKey().get());
+                ModFeatures.RANDOMIUM_ORE_PLACED.getHolder().unwrapKey().get());
     }
 
 
