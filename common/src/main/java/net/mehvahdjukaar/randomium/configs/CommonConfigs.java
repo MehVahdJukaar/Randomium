@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.randomium.configs;
 
-import net.mehvahdjukaar.moonlight.platform.configs.ConfigBuilder;
+import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
+import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
 import net.mehvahdjukaar.randomium.Randomium;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class CommonConfigs {
     public static Supplier<Randomium.ListMode> LOOT_MODE;
 
     public static void init() {
-        ConfigBuilder builder = ConfigBuilder.create(Randomium.res("common"), ConfigBuilder.ConfigType.COMMON);
+        ConfigBuilder builder = ConfigBuilder.create(Randomium.res("common"), ConfigType.COMMON);
         builder.push("spawns");
         SPAWN_PER_CHUNK = builder.comment("Spawn attempts per chunk")
                 .define("spawn_attempts_per_chunk", 12, 0, 200);

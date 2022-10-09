@@ -9,9 +9,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.ModelDataManager;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.client.model.data.ModelProperty;
 
 import java.util.Objects;
@@ -24,14 +21,6 @@ public class RandomiumBlockTile extends BlockEntity {
 
     public RandomiumBlockTile(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState) {
         super(pType, pWorldPosition, pBlockState);
-    }
-
-
-    public IModelData getModelData() {
-        //return data;
-        return new ModelDataMap.Builder()
-                .withInitial(MIMIC, this.getHeldBlock())
-                .build();
     }
 
 
@@ -66,7 +55,7 @@ public class RandomiumBlockTile extends BlockEntity {
         handleUpdateTag(tag);
         if (!Objects.equals(oldMimic, this.mimic)) {
             //not needed cause model data doesn't create new obj. updating old one instead
-            ModelDataManager.requestModelDataRefresh(this);
+            //ModelDataManager.requestModelDataRefresh(this);
             //this.data.setData(MIMIC, this.getHeldBlock());
             this.level.sendBlockUpdated(this.worldPosition, getBlockState(), getBlockState(), 3);
         }

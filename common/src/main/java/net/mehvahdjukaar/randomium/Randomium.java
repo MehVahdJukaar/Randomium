@@ -1,8 +1,8 @@
 package net.mehvahdjukaar.randomium;
 
-import net.mehvahdjukaar.moonlight.platform.PlatformHelper;
-import net.mehvahdjukaar.moonlight.platform.registry.RegHelper;
-import net.mehvahdjukaar.moonlight.util.Utils;
+import net.mehvahdjukaar.moonlight.api.platform.PlatformHelper;
+import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
+import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.randomium.block.RandomiumOreBlock;
 import net.mehvahdjukaar.randomium.configs.CommonConfigs;
 import net.mehvahdjukaar.randomium.entity.MovingBlockEntity;

@@ -2,7 +2,6 @@ package net.mehvahdjukaar.randomium.forge;
 
 import net.mehvahdjukaar.randomium.Randomium;
 import net.mehvahdjukaar.randomium.client.DuplicateItemRenderer;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -10,7 +9,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
-import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.util.NonNullLazy;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,21 +21,21 @@ public class AnyItem extends Item {
         super(p_i48487_1_);
     }
 
-    public static void registerISTER(Consumer<IItemRenderProperties> consumer, BiFunction<BlockEntityRenderDispatcher, EntityModelSet, BlockEntityWithoutLevelRenderer> factory) {
-        consumer.accept(new IItemRenderProperties() {
+    public static void registerISTER(Consumer<IClientItemExtensions> consumer, BiFunction<BlockEntityRenderDispatcher, EntityModelSet, BlockEntityWithoutLevelRenderer> factory) {
+        consumer.accept(new IClientItemExtensions() {
             final NonNullLazy<BlockEntityWithoutLevelRenderer> renderer = NonNullLazy.of(
                     () -> factory.apply(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
                             Minecraft.getInstance().getEntityModels()));
 
             @Override
-            public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
                 return renderer.get();
             }
         });
     }
 
     @Override
-    public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         registerISTER(consumer, DuplicateItemRenderer::new);
     }
 
@@ -53,7 +52,7 @@ public class AnyItem extends Item {
     }
 
     @Override
-    public Rarity getRarity(ItemStack p_77613_1_) {
+    public Rarity getRarity(ItemStack stack) {
         return Randomium.getAnyItem().getRarity();
     }
 }
