@@ -10,27 +10,27 @@ import java.util.function.Supplier;
 
 public class CommonConfigs {
 
-    public static ConfigSpec SPEC;
+    public static final ConfigSpec SPEC;
 
-    public static Supplier<Integer> SPAWN_PER_CHUNK;
+    public static final Supplier<Integer> SPAWN_PER_CHUNK;
 
-    public static Supplier<Integer> EXCITE_ON_ATTACK_CHANCE;
-    public static Supplier<Integer> EXCITE_ON_BLOCK_UPDATE_CHANCE;
-    public static Supplier<Integer> MOVE_CHANCE;
-    public static Supplier<Integer> FALL_CHANCE;
-    public static Supplier<Integer> FLY_CHANCE;
-    public static Supplier<Integer> TELEPORT_CHANCE;
-    public static Supplier<Double> SILK_TOUCH_MULTIPLIER;
+    public static final Supplier<Integer> EXCITE_ON_ATTACK_CHANCE;
+    public static final Supplier<Integer> EXCITE_ON_BLOCK_UPDATE_CHANCE;
+    public static final Supplier<Integer> MOVE_CHANCE;
+    public static final Supplier<Integer> FALL_CHANCE;
+    public static final Supplier<Integer> FLY_CHANCE;
+    public static final Supplier<Integer> TELEPORT_CHANCE;
+    public static final Supplier<Double> SILK_TOUCH_MULTIPLIER;
 
-    public static Supplier<Double> BASE_DROP_CHANCE;
-    public static Supplier<Double> LUCK_MULTIPLIER;
-    public static Supplier<Double> FORTUNE_MULTIPLIER;
-    public static Supplier<Boolean> ALLOW_SILK_TOUCH;
-    public static Supplier<List<String>> MOD_BLACKLIST;
+    public static final Supplier<Double> BASE_DROP_CHANCE;
+    public static final Supplier<Double> LUCK_MULTIPLIER;
+    public static final Supplier<Double> FORTUNE_MULTIPLIER;
+    public static final Supplier<Boolean> ALLOW_SILK_TOUCH;
+    public static final Supplier<List<String>> MOD_BLACKLIST;
 
-    public static Supplier<Randomium.ListMode> LOOT_MODE;
+    public static final Supplier<Randomium.ListMode> LOOT_MODE;
 
-    public static void init() {
+    static {
         ConfigBuilder builder = ConfigBuilder.create(Randomium.res("common"), ConfigType.COMMON);
         builder.push("spawns");
         SPAWN_PER_CHUNK = builder.comment("Spawn attempts per chunk")
@@ -69,5 +69,10 @@ public class CommonConfigs {
         builder.pop();
 
         SPEC = builder.buildAndRegister();
+        SPEC.loadFromFile();
+    }
+
+    public static void init() {
+
     }
 }

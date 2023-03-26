@@ -1,15 +1,17 @@
 package net.mehvahdjukaar.randomium.entity;
 
 import net.mehvahdjukaar.moonlight.api.entity.IExtraClientSpawnData;
-import net.mehvahdjukaar.moonlight.api.platform.PlatformHelper;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -53,8 +55,8 @@ public class MovingBlockEntity extends FallingBlockEntity implements IExtraClien
     }
 
     @Override
-    public Packet<?> getAddEntityPacket() {
-        return PlatformHelper.getEntitySpawnPacket(this);
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+        return (Packet<ClientGamePacketListener>) PlatHelper.getEntitySpawnPacket(this);
     }
 
     @Override
@@ -74,6 +76,7 @@ public class MovingBlockEntity extends FallingBlockEntity implements IExtraClien
         return Randomium.MOVING_BLOCK_ENTITY.get();
     }
 
+    @Override
     public BlockState getBlockState() {
         return state;
     }
@@ -88,7 +91,7 @@ public class MovingBlockEntity extends FallingBlockEntity implements IExtraClien
     protected void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         this.gravityDirection = Direction.from3DDataValue(tag.getByte("GravityDirection"));
-        this.state = NbtUtils.readBlockState(tag.getCompound("BlockState"));
+        this.state = NbtUtils.readBlockState(this.level.holderLookup(Registries.BLOCK),tag.getCompound("BlockState"));
     }
 
     @Override
@@ -137,8 +140,8 @@ public class MovingBlockEntity extends FallingBlockEntity implements IExtraClien
                             if (this.level.setBlock(blockpos1, this.state, 3)) {
                                 ((ServerLevel) this.level).getChunkSource().chunkMap.broadcast(this, new ClientboundBlockUpdatePacket(blockpos1, this.level.getBlockState(blockpos1)));
                                 this.discard();
-                                if (block instanceof Fallable) {
-                                    ((Fallable) block).onLand(this.level, blockpos1, this.state, blockstate, this);
+                                if (block instanceof Fallable fallable) {
+                                    fallable.onLand(this.level, blockpos1, this.state, blockstate, this);
                                 }
 
                             } else if (this.dropItem && this.level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {

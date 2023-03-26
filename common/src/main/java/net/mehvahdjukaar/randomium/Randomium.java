@@ -5,12 +5,13 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.randomium.block.RandomiumOreBlock;
 import net.mehvahdjukaar.randomium.configs.CommonConfigs;
 import net.mehvahdjukaar.randomium.entity.MovingBlockEntity;
+import net.mehvahdjukaar.randomium.items.AnyItem;
 import net.mehvahdjukaar.randomium.items.RandomiumItem;
 import net.mehvahdjukaar.randomium.recipes.RandomiumDuplicateRecipe;
 import net.mehvahdjukaar.randomium.world.ModFeatures;
 import net.minecraft.Util;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
@@ -20,7 +21,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -62,16 +63,19 @@ public class Randomium {
 
 
     public static final Supplier<Item> RANDOMIUM_ORE_ITEM = RegHelper.registerItem(res("randomium_ore"), () ->
-            new BlockItem(RANDOMIUM_ORE.get(), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
+            new BlockItem(RANDOMIUM_ORE.get(), new Item.Properties()));
 
     public static final Supplier<Item> RANDOMIUM_ORE_DEEP_ITEM = RegHelper.registerItem(res("randomium_ore_deepslate"), () ->
-            new BlockItem(RANDOMIUM_ORE_DEEP.get(), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
+            new BlockItem(RANDOMIUM_ORE_DEEP.get(), new Item.Properties()));
 
     public static final Supplier<Item> RANDOMIUM_END_ORE_ITEM = RegHelper.registerItem(res("randomium_ore_end"), () ->
-            new BlockItem(RANDOMIUM_ORE_END.get(), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
+            new BlockItem(RANDOMIUM_ORE_END.get(), new Item.Properties()));
 
     public static final Supplier<Item> RANDOMIUM_ITEM = RegHelper.registerItem(res("randomium"), () ->
-            new RandomiumItem(new Item.Properties().tab(CreativeModeTab.TAB_MISC).rarity(Rarity.EPIC)));
+            new RandomiumItem(new Item.Properties().rarity(Rarity.EPIC)));
+
+    public static final Supplier<Item> DUPLICATE_ITEM = RegHelper.registerItem(Randomium.res("any_item"), () ->
+            new AnyItem(new Item.Properties()));
 
 
     public static final Supplier<EntityType<MovingBlockEntity>> MOVING_BLOCK_ENTITY = RegHelper.registerEntityType(
@@ -85,7 +89,7 @@ public class Randomium {
 
     public static final Supplier<RecipeSerializer<?>> RANDOMIUM_CLONE_RECIPE = RegHelper.registerRecipeSerializer(
             res("randomium_clone"), () ->
-                    new SimpleRecipeSerializer<>(RandomiumDuplicateRecipe::new));
+                    new SimpleCraftingRecipeSerializer<>(RandomiumDuplicateRecipe::new));
 
 
     public enum ListMode {BLACKLIST, WHITELIST}
@@ -98,27 +102,30 @@ public class Randomium {
     public static void commonSetup() {
 
         //yay for oneliners
-        for (var block : Registry.BLOCK) {
+        for (var block : BuiltInRegistries.BLOCK) {
             var sound = block.getSoundType(block.defaultBlockState());
             if (!SOUNDS.contains(sound)) SOUNDS.add(sound);
         }
+        Map<Item, List<ItemStack>> temp = new HashMap<>();
 
         if (LOOT.isEmpty()) {
             if (CommonConfigs.LOOT_MODE.get() == ListMode.BLACKLIST) {
-                Registry.ITEM.stream()
-                        .filter(VALID_DROP)
-                        .forEach(i -> {
-                            NonNullList<ItemStack> temp = NonNullList.create();
-                            try {
-                                Arrays.stream(CreativeModeTab.TABS).forEach(t -> i.fillItemCategory(t, temp));
-                                if (!temp.isEmpty()) LOOT.add(temp);
-                            } catch (Exception ignored) {
-                            }
-                        });
+                for (var t : CreativeModeTabs.tabs()) {
+                    t.getDisplayItems().stream()
+                            .filter(VALID_DROP)
+                            .forEach(i -> {
+                                var set = temp.computeIfAbsent(i.getItem(), j -> new ArrayList<>());
+                                for (ItemStack s : set) {
+                                    if (s.equals(i)) return;
+                                }
+                                set.add(i);
+                            });
+                }
+                LOOT.addAll(temp.values());
                 //lucky
                 LOOT.add(Collections.singletonList(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LUCK)));
             } else {
-                Registry.ITEM.getTagOrEmpty(WHITELIST).forEach(i -> LOOT.add(Collections.singletonList(i.value().getDefaultInstance())));
+                BuiltInRegistries.ITEM.getTagOrEmpty(WHITELIST).forEach(i -> LOOT.add(Collections.singletonList(i.value().getDefaultInstance())));
             }
         }
         SHUFFLED_ANY_ITEM.clear();
@@ -149,13 +156,14 @@ public class Randomium {
     private static final List<ItemStack> SHUFFLED_ANY_ITEM = new ArrayList<>();
     private static final List<SoundType> SOUNDS = new ArrayList<>();
 
-    public static TagKey<Item> BLACKLIST = TagKey.create(Registry.ITEM_REGISTRY, res("blacklist"));
-    public static TagKey<Item> WHITELIST = TagKey.create(Registry.ITEM_REGISTRY, res("whitelist"));
+    public static final TagKey<Item> BLACKLIST = TagKey.create(Registries.ITEM, res("blacklist"));
+    public static final TagKey<Item> WHITELIST = TagKey.create(Registries.ITEM, res("whitelist"));
 
-    private static final Predicate<Item> VALID_DROP = (i) -> {
-        if (i == Items.AIR) return false;
-        if (i.builtInRegistryHolder().is(BLACKLIST)) return false;
-        if (i instanceof SpawnEggItem) return false;
+    private static final Predicate<ItemStack> VALID_DROP = (i) -> {
+        if (i.getItem() == Items.AIR) return false;
+        if (i.is(BLACKLIST)) return false;
+        if (i.getItem() instanceof SpawnEggItem) return false;
+        //should be covered by subsequent blacklist but better be sure
         ResourceLocation reg = Utils.getID(i);
         if (CommonConfigs.MOD_BLACKLIST.get().contains(reg.getNamespace())) return false;
         String name = reg.getPath();

@@ -2,7 +2,6 @@ package net.mehvahdjukaar.randomium.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.moonlight.api.client.util.RenderUtil;
-import net.mehvahdjukaar.moonlight.api.platform.ClientPlatformHelper;
 import net.mehvahdjukaar.randomium.entity.MovingBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -31,10 +30,10 @@ public class MovingBlockEntityRenderer extends EntityRenderer<MovingBlockEntity>
             Level world = entity.level;
             if (blockstate != world.getBlockState(entity.blockPosition())) {
                 matrixStack.pushPose();
-                BlockPos blockpos = new BlockPos(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
+                BlockPos blockPos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
                 matrixStack.translate(-0.5D, 0.0D, -0.5D);
                 BlockRenderDispatcher modelRenderer = Minecraft.getInstance().getBlockRenderer();
-                RenderUtil.renderBlock(blockstate.getSeed(entity.getStartPos()), matrixStack, buffer, blockstate, world, blockpos, modelRenderer);
+                RenderUtil.renderBlock(blockstate.getSeed(entity.getStartPos()), matrixStack, buffer, blockstate, world, blockPos, modelRenderer);
                 matrixStack.popPose();
                 super.render(entity, val, partialTicks, matrixStack, buffer, light);
             }

@@ -14,7 +14,9 @@ dependencies {
     //implementation fileTree(dir: 'mods', include: '*.jar')
 
     modImplementation ("net.mehvahdjukaar:moonlight:${rootProject.moonlight_version}")
-    //modImplementation("curse.maven:selene-499980:3859470")
+
+    modCompileOnly("curse.maven:jei-238222:4405345")
+    modCompileOnly("curse.maven:roughly-enough-items-310111:4401136")
 }
 
 publishing {

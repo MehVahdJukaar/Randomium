@@ -20,6 +20,9 @@
     ],
     "modmenu": [
       "net.mehvahdjukaar.randomium.modMenu.ModMenuCompat"
+    ],
+    "rei_client": [
+      "net.mehvahdjukaar.randomium.integration.REICompat"
     ]
   },
   "mixins": [

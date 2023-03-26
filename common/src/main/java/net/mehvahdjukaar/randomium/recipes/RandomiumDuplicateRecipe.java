@@ -3,10 +3,12 @@ package net.mehvahdjukaar.randomium.recipes;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
@@ -14,8 +16,9 @@ import net.minecraft.world.level.Level;
 
 public class RandomiumDuplicateRecipe extends CustomRecipe {
 
-    public RandomiumDuplicateRecipe(ResourceLocation resourceLocation) {
-        super(resourceLocation);
+
+    public RandomiumDuplicateRecipe(ResourceLocation resourceLocation, CraftingBookCategory craftingBookCategory) {
+        super(resourceLocation, craftingBookCategory);
     }
 
     private boolean isRandomium(ItemStack stack) {
@@ -76,7 +79,7 @@ public class RandomiumDuplicateRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer inv) {
+    public ItemStack assemble(CraftingContainer inv, RegistryAccess registryAccess) {
         for (int i = 0; i < inv.getContainerSize(); ++i) {
             ItemStack stack = inv.getItem(i);
             if (!stack.isEmpty() && !isRandomium(stack) && canBeDuplicated(stack)) {

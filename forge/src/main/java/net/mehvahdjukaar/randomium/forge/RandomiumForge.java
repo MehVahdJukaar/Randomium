@@ -1,6 +1,6 @@
 package net.mehvahdjukaar.randomium.forge;
 
-import net.mehvahdjukaar.moonlight.api.platform.PlatformHelper;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.mehvahdjukaar.randomium.RandomiumClient;
@@ -27,14 +27,13 @@ public class RandomiumForge {
         bus.addListener(RandomiumForge::init);
 
         Randomium.commonInit();
-        if (PlatformHelper.getEnv().isClient()) {
+        if (PlatHelper.getPhysicalSide().isClient()) {
             RandomiumClient.init();
         }
 
     }
 
-    public static final Supplier<Item> DUPLICATE_ITEM = RegHelper.registerItem(Randomium.res("any_item"), () ->
-            new AnyItem(new Item.Properties().tab(null)));
+    //TODO: REI RECIPE
 
 
     public static void init(final FMLCommonSetupEvent event) {
