@@ -12,8 +12,6 @@ public class CommonConfigs {
 
     public static final ConfigSpec SPEC;
 
-    public static final Supplier<Integer> SPAWN_PER_CHUNK;
-
     public static final Supplier<Integer> EXCITE_ON_ATTACK_CHANCE;
     public static final Supplier<Integer> EXCITE_ON_BLOCK_UPDATE_CHANCE;
     public static final Supplier<Integer> MOVE_CHANCE;
@@ -32,10 +30,6 @@ public class CommonConfigs {
 
     static {
         ConfigBuilder builder = ConfigBuilder.create(Randomium.res("common"), ConfigType.COMMON);
-        builder.push("spawns");
-        SPAWN_PER_CHUNK = builder.comment("Spawn attempts per chunk")
-                .define("spawn_attempts_per_chunk", 12, 0, 200);
-        builder.pop();
         builder.push("interactions");
         EXCITE_ON_ATTACK_CHANCE = builder.comment("Chance for the block to try to move when it's attacked, picking one of the following actions")
                 .define("excite_chance_on_attack", 70, 0, 100);
