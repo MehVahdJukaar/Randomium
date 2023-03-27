@@ -1,7 +1,7 @@
 {
   "parent": "builtin/entity",
   "textures": {
-    "particle": "randomium:items/randomium"
+    "particle": "randomium:item/randomium"
   },
   "gui_light": "front",
   "display": {

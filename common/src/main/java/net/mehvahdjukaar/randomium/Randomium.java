@@ -2,12 +2,12 @@ package net.mehvahdjukaar.randomium;
 
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
-import net.mehvahdjukaar.randomium.common.RandomiumOreBlock;
 import net.mehvahdjukaar.randomium.common.CommonConfigs;
 import net.mehvahdjukaar.randomium.common.MovingBlockEntity;
+import net.mehvahdjukaar.randomium.common.RandomiumDuplicateRecipe;
+import net.mehvahdjukaar.randomium.common.RandomiumOreBlock;
 import net.mehvahdjukaar.randomium.common.items.AnyItem;
 import net.mehvahdjukaar.randomium.common.items.RandomiumItem;
-import net.mehvahdjukaar.randomium.common.RandomiumDuplicateRecipe;
 import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -42,33 +42,21 @@ public class Randomium {
     }
 
     private static final Logger LOGGER = LogManager.getLogger();
-    //yes
-    private static Random RAND = new Random();
 
-    public static final Supplier<Block> RANDOMIUM_ORE = RegHelper.registerBlock(res("randomium_ore"), () ->
+    public static final Supplier<Block> RANDOMIUM_ORE = RegHelper.registerBlockWithItem(res("randomium_ore"), () ->
             new RandomiumOreBlock(BlockBehaviour.Properties.of(Material.STONE)
                     .requiresCorrectToolForDrops()
                     .strength(4.0F, 3.0F)));
 
-    public static final Supplier<Block> RANDOMIUM_ORE_DEEP = RegHelper.registerBlock(res("randomium_ore_deepslate"), () ->
+    public static final Supplier<Block> RANDOMIUM_ORE_DEEP = RegHelper.registerBlockWithItem(res("randomium_ore_deepslate"), () ->
             new RandomiumOreBlock(BlockBehaviour.Properties.copy(Blocks.DEEPSLATE)
                     .requiresCorrectToolForDrops()
                     .strength(5.25F, 3.0F)));
 
-    public static final Supplier<Block> RANDOMIUM_ORE_END = RegHelper.registerBlock(res("randomium_ore_end"), () ->
+    public static final Supplier<Block> RANDOMIUM_ORE_END = RegHelper.registerBlockWithItem(res("randomium_ore_end"), () ->
             new RandomiumOreBlock(BlockBehaviour.Properties.copy(Blocks.END_STONE)
                     .requiresCorrectToolForDrops()
                     .strength(4.0F, 3.0F)));
-
-
-    public static final Supplier<Item> RANDOMIUM_ORE_ITEM = RegHelper.registerItem(res("randomium_ore"), () ->
-            new BlockItem(RANDOMIUM_ORE.get(), new Item.Properties()));
-
-    public static final Supplier<Item> RANDOMIUM_ORE_DEEP_ITEM = RegHelper.registerItem(res("randomium_ore_deepslate"), () ->
-            new BlockItem(RANDOMIUM_ORE_DEEP.get(), new Item.Properties()));
-
-    public static final Supplier<Item> RANDOMIUM_END_ORE_ITEM = RegHelper.registerItem(res("randomium_ore_end"), () ->
-            new BlockItem(RANDOMIUM_ORE_END.get(), new Item.Properties()));
 
     public static final Supplier<Item> RANDOMIUM_ITEM = RegHelper.registerItem(res("randomium"), () ->
             new RandomiumItem(new Item.Properties().rarity(Rarity.EPIC)));
@@ -100,8 +88,9 @@ public class Randomium {
     }
 
     private static void addItemsToTab(RegHelper.ItemToTabEvent event) {
-        event.add(CreativeModeTabs.INGREDIENTS, RANDOMIUM_ITEM.get());
-        //event.add(CreativeModeTabs.BUILDING_BLOCKS, RANDOMIUM_ORE.get(), RANDOMIUM_END_ORE_ITEM.get());
+        event.addAfter(CreativeModeTabs.INGREDIENTS, i -> i.is(Items.AMETHYST_SHARD), RANDOMIUM_ITEM.get());
+        event.addAfter(CreativeModeTabs.NATURAL_BLOCKS, i -> i.is(Items.DEEPSLATE_DIAMOND_ORE),
+                RANDOMIUM_ORE.get(), RANDOMIUM_ORE_DEEP.get(), RANDOMIUM_ORE_END.get());
     }
 
     public static void commonSetup() {
@@ -169,7 +158,7 @@ public class Randomium {
         if (i.getItem() == Items.AIR) return false;
         if (i.is(BLACKLIST)) return false;
         if (i.getItem() instanceof SpawnEggItem) return false;
-        if(CreativeModeTabs.OP_BLOCKS.contains(i)) return false;
+        if (CreativeModeTabs.OP_BLOCKS.contains(i)) return false;
         //should be covered by subsequent blacklist but better be sure
         ResourceLocation reg = Utils.getID(i);
         if (CommonConfigs.MOD_BLACKLIST.get().contains(reg.getNamespace())) return false;

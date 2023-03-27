@@ -1,6 +1,6 @@
 {
 	"parent": "minecraft:block/cube_all",
 	"textures": {
-		"all": "randomium:blocks/randomium_ore"
+		"all": "randomium:block/randomium_ore"
 	}
 }

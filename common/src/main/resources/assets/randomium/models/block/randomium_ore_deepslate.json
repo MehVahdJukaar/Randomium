@@ -1,6 +1,6 @@
 {
 	"parent": "minecraft:block/cube_all",
 	"textures": {
-		"all": "randomium:blocks/randomium_ore_deepslate"
+		"all": "randomium:block/randomium_ore_deepslate"
 	}
 }

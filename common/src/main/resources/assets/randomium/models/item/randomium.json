@@ -1,6 +1,6 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"layer0": "randomium:items/randomium"
+		"layer0": "randomium:item/randomium"
 	}
 }
