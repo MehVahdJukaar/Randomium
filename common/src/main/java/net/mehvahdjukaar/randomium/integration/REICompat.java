@@ -4,7 +4,7 @@ import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.forge.REIPluginClient;
 import me.shedaniel.rei.plugin.common.displays.crafting.DefaultCraftingDisplay;
-import net.mehvahdjukaar.randomium.items.AnyItem;
+import net.mehvahdjukaar.randomium.common.items.AnyItem;
 
 @REIPluginClient
 public class REICompat implements REIClientPlugin {

@@ -7,4 +7,9 @@ public class RandomiumPlatStuffImpl {
     public static String getModId(ItemStack s) {
         return Utils.getID(s).getNamespace();
     }
+
+    public static boolean hasCapability(ItemStack stack) {
+        return false;
+    }
+
 }

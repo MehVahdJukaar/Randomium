@@ -1,6 +1,6 @@
 package net.mehvahdjukaar.randomium.forge;
 
-import net.mehvahdjukaar.randomium.items.RandomiumItem;
+import net.mehvahdjukaar.randomium.common.items.RandomiumItem;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

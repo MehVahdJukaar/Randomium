@@ -3,7 +3,7 @@ package net.mehvahdjukaar.randomium.modMenu;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import net.mehvahdjukaar.randomium.Randomium;
-import net.mehvahdjukaar.randomium.configs.CommonConfigs;
+import net.mehvahdjukaar.randomium.common.CommonConfigs;
 
 public class ModMenuCompat implements ModMenuApi {
 

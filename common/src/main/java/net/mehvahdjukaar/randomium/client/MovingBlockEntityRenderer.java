@@ -2,7 +2,7 @@ package net.mehvahdjukaar.randomium.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.moonlight.api.client.util.RenderUtil;
-import net.mehvahdjukaar.randomium.entity.MovingBlockEntity;
+import net.mehvahdjukaar.randomium.common.MovingBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;

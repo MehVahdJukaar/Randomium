@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.randomium.configs;
+package net.mehvahdjukaar.randomium.common;
 
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigSpec;

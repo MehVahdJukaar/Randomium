@@ -11,8 +11,8 @@ import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategor
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import net.mehvahdjukaar.randomium.Randomium;
-import net.mehvahdjukaar.randomium.items.AnyItem;
-import net.mehvahdjukaar.randomium.recipes.RandomiumDuplicateRecipe;
+import net.mehvahdjukaar.randomium.common.items.AnyItem;
+import net.mehvahdjukaar.randomium.common.RandomiumDuplicateRecipe;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;

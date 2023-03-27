@@ -1,11 +1,8 @@
-package net.mehvahdjukaar.randomium.block;
+package net.mehvahdjukaar.randomium.common;
 
 import com.google.common.base.Suppliers;
 import dev.architectury.injectables.annotations.PlatformOnly;
 import net.mehvahdjukaar.randomium.Randomium;
-import net.mehvahdjukaar.randomium.configs.CommonConfigs;
-import net.mehvahdjukaar.randomium.entity.MovingBlockEntity;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;

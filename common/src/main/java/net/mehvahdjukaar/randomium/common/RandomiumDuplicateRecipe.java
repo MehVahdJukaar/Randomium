@@ -1,7 +1,7 @@
-package net.mehvahdjukaar.randomium.recipes;
+package net.mehvahdjukaar.randomium.common;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.mehvahdjukaar.randomium.Randomium;
+import net.mehvahdjukaar.randomium.RandomiumPlatStuff;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
@@ -29,7 +29,7 @@ public class RandomiumDuplicateRecipe extends CustomRecipe {
 
         CompoundTag tag = stack.getTag();
         if (tag != null) {
-            if (hasCapability(stack)) return false;
+            if (RandomiumPlatStuff.hasCapability(stack)) return false;
             String s = tag.toString();
             //can never be too careful
             if (s.contains("Items:[") || s.contains("BlockEntityTag") ||
@@ -43,11 +43,6 @@ public class RandomiumDuplicateRecipe extends CustomRecipe {
             }
         }
         return !stack.is(Randomium.BLACKLIST);
-    }
-
-    @ExpectPlatform
-    public static boolean hasCapability(ItemStack stack) {
-        throw new AssertionError();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.randomium.entity;
+package net.mehvahdjukaar.randomium.common;
 
 import net.mehvahdjukaar.moonlight.api.entity.IExtraClientSpawnData;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;

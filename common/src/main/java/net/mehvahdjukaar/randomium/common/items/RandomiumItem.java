@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.randomium.items;
+package net.mehvahdjukaar.randomium.common.items;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

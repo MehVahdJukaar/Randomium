@@ -9,4 +9,9 @@ public class RandomiumPlatStuff {
     public static String getModId(ItemStack s) {
         throw new AssertionError();
     }
+
+    @ExpectPlatform
+    public static boolean hasCapability(ItemStack stack) {
+        throw new AssertionError();
+    }
 }

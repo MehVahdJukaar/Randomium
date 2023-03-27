@@ -2,13 +2,12 @@ package net.mehvahdjukaar.randomium;
 
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
-import net.mehvahdjukaar.randomium.block.RandomiumOreBlock;
-import net.mehvahdjukaar.randomium.configs.CommonConfigs;
-import net.mehvahdjukaar.randomium.entity.MovingBlockEntity;
-import net.mehvahdjukaar.randomium.items.AnyItem;
-import net.mehvahdjukaar.randomium.items.RandomiumItem;
-import net.mehvahdjukaar.randomium.recipes.RandomiumDuplicateRecipe;
-import net.mehvahdjukaar.randomium.world.ModFeatures;
+import net.mehvahdjukaar.randomium.common.RandomiumOreBlock;
+import net.mehvahdjukaar.randomium.common.CommonConfigs;
+import net.mehvahdjukaar.randomium.common.MovingBlockEntity;
+import net.mehvahdjukaar.randomium.common.items.AnyItem;
+import net.mehvahdjukaar.randomium.common.items.RandomiumItem;
+import net.mehvahdjukaar.randomium.common.RandomiumDuplicateRecipe;
 import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -96,7 +95,13 @@ public class Randomium {
 
     public static void commonInit() {
         CommonConfigs.init();
-        ModFeatures.init();
+
+        RegHelper.addItemsToTabsRegistration(Randomium::addItemsToTab);
+    }
+
+    private static void addItemsToTab(RegHelper.ItemToTabEvent event) {
+        event.add(CreativeModeTabs.INGREDIENTS, RANDOMIUM_ITEM.get());
+        //event.add(CreativeModeTabs.BUILDING_BLOCKS, RANDOMIUM_ORE.get(), RANDOMIUM_END_ORE_ITEM.get());
     }
 
     public static void commonSetup() {
@@ -134,6 +139,7 @@ public class Randomium {
 
     }
 
+
     public static ItemStack getRandomItem(RandomSource random) {
         var list = Randomium.LOOT.get(random.nextInt(Randomium.LOOT.size()));
         ItemStack stack = list.get(random.nextInt(list.size())).copy();
@@ -163,6 +169,7 @@ public class Randomium {
         if (i.getItem() == Items.AIR) return false;
         if (i.is(BLACKLIST)) return false;
         if (i.getItem() instanceof SpawnEggItem) return false;
+        if(CreativeModeTabs.OP_BLOCKS.contains(i)) return false;
         //should be covered by subsequent blacklist but better be sure
         ResourceLocation reg = Utils.getID(i);
         if (CommonConfigs.MOD_BLACKLIST.get().contains(reg.getNamespace())) return false;

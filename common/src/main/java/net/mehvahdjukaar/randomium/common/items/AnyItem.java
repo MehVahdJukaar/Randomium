@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.randomium.items;
+package net.mehvahdjukaar.randomium.common.items;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.injectables.annotations.PlatformOnly;
