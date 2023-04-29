@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.randomium;
 
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.randomium.common.CommonConfigs;
@@ -94,33 +95,14 @@ public class Randomium {
     }
 
     public static void commonSetup() {
-
         //yay for oneliners
         for (var block : BuiltInRegistries.BLOCK) {
             var sound = block.getSoundType(block.defaultBlockState());
             if (!SOUNDS.contains(sound)) SOUNDS.add(sound);
         }
-        Map<Item, List<ItemStack>> temp = new HashMap<>();
-
-        if (LOOT.isEmpty()) {
-            if (CommonConfigs.LOOT_MODE.get() == ListMode.BLACKLIST) {
-                for (var t : CreativeModeTabs.tabs()) {
-                    t.getDisplayItems().stream()
-                            .filter(VALID_DROP)
-                            .forEach(i -> {
-                                var set = temp.computeIfAbsent(i.getItem(), j -> new ArrayList<>());
-                                for (ItemStack s : set) {
-                                    if (s.equals(i)) return;
-                                }
-                                set.add(i);
-                            });
-                }
-                LOOT.addAll(temp.values());
-                //lucky
-                LOOT.add(Collections.singletonList(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LUCK)));
-            } else {
-                BuiltInRegistries.ITEM.getTagOrEmpty(WHITELIST).forEach(i -> LOOT.add(Collections.singletonList(i.value().getDefaultInstance())));
-            }
+        if (LOOT.isEmpty() && PlatHelper.getPlatform().isForge()) {
+            //fabric happens before creative tabs are filled
+            populateLoot();
         }
         SHUFFLED_ANY_ITEM.clear();
         SHUFFLED_ANY_ITEM.addAll(LOOT.stream().map(l -> l.get(0)).toList());
@@ -128,8 +110,31 @@ public class Randomium {
 
     }
 
+    private static void populateLoot() {
+        Map<Item, List<ItemStack>> temp = new HashMap<>();
+        if (CommonConfigs.LOOT_MODE.get() == ListMode.BLACKLIST) {
+            for (var t : CreativeModeTabs.tabs()) {
+                t.getDisplayItems().stream()
+                        .filter(VALID_DROP)
+                        .forEach(i -> {
+                            var set = temp.computeIfAbsent(i.getItem(), j -> new ArrayList<>());
+                            for (ItemStack s : set) {
+                                if (s.equals(i)) return;
+                            }
+                            set.add(i);
+                        });
+            }
+            LOOT.addAll(temp.values());
+            //lucky
+            LOOT.add(Collections.singletonList(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LUCK)));
+        } else {
+            BuiltInRegistries.ITEM.getTagOrEmpty(WHITELIST).forEach(i -> LOOT.add(Collections.singletonList(i.value().getDefaultInstance())));
+        }
+    }
+
 
     public static ItemStack getRandomItem(RandomSource random) {
+        if (LOOT.isEmpty()) populateLoot();
         var list = Randomium.LOOT.get(random.nextInt(Randomium.LOOT.size()));
         ItemStack stack = list.get(random.nextInt(list.size())).copy();
         stack.setCount(1);
@@ -138,6 +143,7 @@ public class Randomium {
 
     public static ItemStack getAnyItem() {
         int size = Randomium.SHUFFLED_ANY_ITEM.size();
+        if (size == 0) return Items.DIAMOND.getDefaultInstance();
         int time = (int) (Util.getMillis() / 500L);
         return Randomium.SHUFFLED_ANY_ITEM.get(time % size);
     }
