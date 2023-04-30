@@ -1,0 +1,11 @@
+{
+  "block.randomium.randomium_ore": "Рандомієва руда",
+  "block.randomium.randomium_ore_deepslate": "Глибосланцева рандомієва руда",
+  "block.randomium.randomium_block": "Рандомієвий блок",
+  "block.randomium.randomium_stabilized": "Стабілізований рандомій",
+  "item.randomium.randomium": "Рандомій",
+  "message.randomium.description" : "Нестабільний, змінюється під час створення",
+  "block.randomium.randomium_ore_end": "Рандомієва руда Енду",
+  "entity.randomium.moving_block": "Рандомієва руда Енду",
+  "item.randomium.any_item": "[Будь-який предмет]"
+}
