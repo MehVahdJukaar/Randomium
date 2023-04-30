@@ -5,6 +5,8 @@ import net.mehvahdjukaar.moonlight.api.misc.RegSupplier;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.mehvahdjukaar.randomium.configs.CommonConfigs;
+import net.minecraft.client.renderer.ItemModelShaper;
+import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.data.worldgen.features.OreFeatures;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.VerticalAnchor;

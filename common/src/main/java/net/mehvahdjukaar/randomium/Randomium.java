@@ -136,6 +136,7 @@ public class Randomium {
 
     public static ItemStack getAnyItem() {
         int size = Randomium.SHUFFLED_ANY_ITEM.size();
+        if (size == 0) return RANDOMIUM_ITEM.get().getDefaultInstance();
         int time = (int) (Util.getMillis() / 500L);
         return Randomium.SHUFFLED_ANY_ITEM.get(time % size);
     }

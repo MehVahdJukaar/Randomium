@@ -69,5 +69,6 @@ public class CommonConfigs {
         builder.pop();
 
         SPEC = builder.buildAndRegister();
+        SPEC.loadFromFile(); //since we use for reg stuff
     }
 }
