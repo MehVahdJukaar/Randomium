@@ -1,1 +1,1 @@
-* fixed rare possible issue
+- fixed loot table

@@ -100,17 +100,15 @@ public class Randomium {
             var sound = block.getSoundType(block.defaultBlockState());
             if (!SOUNDS.contains(sound)) SOUNDS.add(sound);
         }
-        if (LOOT.isEmpty() && PlatHelper.getPlatform().isForge()) {
-            //fabric happens before creative tabs are filled
-            populateLoot();
-        }
+
         SHUFFLED_ANY_ITEM.clear();
         SHUFFLED_ANY_ITEM.addAll(LOOT.stream().map(l -> l.get(0)).toList());
         Collections.shuffle(SHUFFLED_ANY_ITEM);
 
     }
 
-    private static void populateLoot() {
+    //tabs arent even ready in mod setup...
+    public static void populateLoot() {
         Map<Item, List<ItemStack>> temp = new HashMap<>();
         if (CommonConfigs.LOOT_MODE.get() == ListMode.BLACKLIST) {
             for (var t : CreativeModeTabs.tabs()) {

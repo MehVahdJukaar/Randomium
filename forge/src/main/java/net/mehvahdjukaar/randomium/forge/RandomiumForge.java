@@ -9,6 +9,7 @@ import net.minecraftforge.common.CreativeModeTabRegistry;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
@@ -40,5 +41,7 @@ public class RandomiumForge {
     public static void init(final FMLCommonSetupEvent event) {
         event.enqueueWork(Randomium::commonSetup);
     }
+
+
 
 }
