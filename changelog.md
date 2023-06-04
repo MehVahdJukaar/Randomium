@@ -1,1 +1,1 @@
-- fixed loot table
+- fixed loot being empty in survival (thanks to GizmoTheMoonPig )

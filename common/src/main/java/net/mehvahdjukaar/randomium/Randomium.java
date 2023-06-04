@@ -166,7 +166,7 @@ public class Randomium {
         if (i.getItem() instanceof SpawnEggItem) return false;
         if (CreativeModeTabs.OP_BLOCKS.contains(i)) return false;
         //should be covered by subsequent blacklist but better be sure
-        ResourceLocation reg = Utils.getID(i);
+        ResourceLocation reg = Utils.getID(i.getItem());
         if (CommonConfigs.MOD_BLACKLIST.get().contains(reg.getNamespace())) return false;
         String name = reg.getPath();
         return !name.contains("creative") && !name.contains("debug")
