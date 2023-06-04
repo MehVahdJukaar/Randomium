@@ -80,7 +80,7 @@ public class RandomiumOreBlock extends Block {
         } else if (tool != null && CommonConfigs.ALLOW_SILK_TOUCH.get() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) != 0)
             loot = new ItemStack(this.asItem());
         else {
-            loot = Randomium.getRandomItem(world.random);
+            loot = Randomium.getRandomItem(world, world.random);
         }
         return Collections.singletonList(loot);
     }

@@ -22,6 +22,7 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
@@ -108,7 +109,8 @@ public class Randomium {
     }
 
     //tabs arent even ready in mod setup...
-    public static void populateLoot() {
+    public static void populateLoot(Level level) {
+        CreativeModeTabs.tryRebuildTabContents(level.enabledFeatures(), false, level.registryAccess());
         Map<Item, List<ItemStack>> temp = new HashMap<>();
         if (CommonConfigs.LOOT_MODE.get() == ListMode.BLACKLIST) {
             for (var t : CreativeModeTabs.tabs()) {
@@ -131,8 +133,8 @@ public class Randomium {
     }
 
 
-    public static ItemStack getRandomItem(RandomSource random) {
-        if (LOOT.isEmpty()) populateLoot();
+    public static ItemStack getRandomItem(Level level, RandomSource random) {
+        if (LOOT.isEmpty()) populateLoot(level);
         var list = Randomium.LOOT.get(random.nextInt(Randomium.LOOT.size()));
         ItemStack stack = list.get(random.nextInt(list.size())).copy();
         stack.setCount(1);
