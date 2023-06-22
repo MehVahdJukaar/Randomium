@@ -27,7 +27,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,7 +45,7 @@ public class Randomium {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static final Supplier<Block> RANDOMIUM_ORE = RegHelper.registerBlockWithItem(res("randomium_ore"), () ->
-            new RandomiumOreBlock(BlockBehaviour.Properties.of(Material.STONE)
+            new RandomiumOreBlock(BlockBehaviour.Properties.copy(Blocks.STONE)
                     .requiresCorrectToolForDrops()
                     .strength(4.0F, 3.0F)));
 
@@ -110,7 +109,9 @@ public class Randomium {
 
     //tabs arent even ready in mod setup...
     public static void populateLoot(Level level) {
-        CreativeModeTabs.tryRebuildTabContents(level.enabledFeatures(), false, level.registryAccess());
+        if(!CreativeModeTabs.getDefaultTab().hasAnyItems()) {
+            CreativeModeTabs.tryRebuildTabContents(level.enabledFeatures(), false, level.registryAccess());
+        }
         Map<Item, List<ItemStack>> temp = new HashMap<>();
         if (CommonConfigs.LOOT_MODE.get() == ListMode.BLACKLIST) {
             for (var t : CreativeModeTabs.tabs()) {
@@ -164,7 +165,7 @@ public class Randomium {
         if (i.getItem() == Items.AIR) return false;
         if (i.is(BLACKLIST)) return false;
         if (i.getItem() instanceof SpawnEggItem) return false;
-        if (CreativeModeTabs.OP_BLOCKS.contains(i)) return false;
+        if (BuiltInRegistries.CREATIVE_MODE_TAB.get(CreativeModeTabs.OP_BLOCKS).contains(i)) return false;
         //should be covered by subsequent blacklist but better be sure
         ResourceLocation reg = Utils.getID(i.getItem());
         if (CommonConfigs.MOD_BLACKLIST.get().contains(reg.getNamespace())) return false;

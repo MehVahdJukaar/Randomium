@@ -27,7 +27,7 @@ public class MovingBlockEntityRenderer extends EntityRenderer<MovingBlockEntity>
         BlockState blockstate = entity.getBlockState();
 
         if (blockstate.getRenderShape() == RenderShape.MODEL) {
-            Level world = entity.level;
+            Level world = entity.level();
             if (blockstate != world.getBlockState(entity.blockPosition())) {
                 matrixStack.pushPose();
                 BlockPos blockPos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());

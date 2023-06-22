@@ -91,7 +91,7 @@ public class MovingBlockEntity extends FallingBlockEntity implements IExtraClien
     protected void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         this.gravityDirection = Direction.from3DDataValue(tag.getByte("GravityDirection"));
-        this.state = NbtUtils.readBlockState(this.level.holderLookup(Registries.BLOCK),tag.getCompound("BlockState"));
+        this.state = NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),tag.getCompound("BlockState"));
     }
 
     @Override
@@ -100,11 +100,12 @@ public class MovingBlockEntity extends FallingBlockEntity implements IExtraClien
             this.discard();
         } else {
             Block block = this.state.getBlock();
+            Level level = this.level();
             if (this.time++ == 0) {
                 BlockPos blockpos = this.blockPosition();
-                if (this.level.getBlockState(blockpos).is(block)) {
-                    this.level.removeBlock(blockpos, false);
-                } else if (!this.level.isClientSide) {
+                if (level.getBlockState(blockpos).is(block)) {
+                    level.removeBlock(blockpos, false);
+                } else if (!level.isClientSide) {
                     this.discard();
                     return;
                 }
@@ -117,7 +118,7 @@ public class MovingBlockEntity extends FallingBlockEntity implements IExtraClien
             }
 
             this.move(MoverType.SELF, this.getDeltaMovement());
-            if (!this.level.isClientSide) {
+            if (!level.isClientSide) {
                 BlockPos blockpos1 = this.blockPosition();
 
                 boolean collided = this.verticalCollision || this.horizontalCollision;
@@ -129,42 +130,42 @@ public class MovingBlockEntity extends FallingBlockEntity implements IExtraClien
                         !isVertical && this.random.nextBoolean() && this.position().distanceToSqr(Vec3.atBottomCenterOf(this.blockPosition())) <=
                                 Mth.square((float) this.getDeltaMovement().multiply(n.getX(), n.getY(), n.getZ()).length()) / 2f) {
 
-                    BlockState blockstate = this.level.getBlockState(blockpos1);
+                    BlockState blockstate = level.getBlockState(blockpos1);
 
                     if (!blockstate.is(Blocks.MOVING_PISTON)) {
-                        boolean flag2 = blockstate.canBeReplaced(new DirectionalPlaceContext(this.level, blockpos1, Direction.DOWN, ItemStack.EMPTY, Direction.UP));
+                        boolean flag2 = blockstate.canBeReplaced(new DirectionalPlaceContext(level, blockpos1, Direction.DOWN, ItemStack.EMPTY, Direction.UP));
                         //boolean hasAirBelow = FallingBlock.isFree(this.level.getBlockState(blockpos1.below()));
-                        boolean flag4 = this.state.canSurvive(this.level, blockpos1);
+                        boolean flag4 = this.state.canSurvive(level, blockpos1);
                         if (flag2 && flag4) {
 
-                            if (this.level.setBlock(blockpos1, this.state, 3)) {
-                                ((ServerLevel) this.level).getChunkSource().chunkMap.broadcast(this, new ClientboundBlockUpdatePacket(blockpos1, this.level.getBlockState(blockpos1)));
+                            if (level.setBlock(blockpos1, this.state, 3)) {
+                                ((ServerLevel) level).getChunkSource().chunkMap.broadcast(this, new ClientboundBlockUpdatePacket(blockpos1, level.getBlockState(blockpos1)));
                                 this.discard();
                                 if (block instanceof Fallable fallable) {
-                                    fallable.onLand(this.level, blockpos1, this.state, blockstate, this);
+                                    fallable.onLand(level, blockpos1, this.state, blockstate, this);
                                 }
 
-                            } else if (this.dropItem && this.level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+                            } else if (this.dropItem && level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
                                 this.discard();
                                 this.callOnBrokenAfterFall(block, blockpos1);
                                 this.spawnAtLocation(block);
                             }
                         } else {
                             this.discard();
-                            if (this.dropItem && this.level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+                            if (this.dropItem && level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
                                 this.callOnBrokenAfterFall(block, blockpos1);
                                 this.spawnAtLocation(block);
                             }
                         }
                     }
                 } else {
-                    if (!this.level.isClientSide && (this.time > 100 && (blockpos1.getY() <= this.level.getMinBuildHeight() || blockpos1.getY() > this.level.getMaxBuildHeight()) || this.time > 600)) {
+                    if (!level.isClientSide && (this.time > 100 && (blockpos1.getY() <= level.getMinBuildHeight() || blockpos1.getY() > level.getMaxBuildHeight()) || this.time > 600)) {
 
                         if (this.gravityDirection == Direction.UP) {
                             this.gravityDirection = Direction.DOWN;
                             this.time = 1;
                         } else {
-                            if (this.level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+                            if (level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
                                 this.spawnAtLocation(block);
                             }
 

@@ -14,7 +14,9 @@ import net.mehvahdjukaar.randomium.Randomium;
 import net.mehvahdjukaar.randomium.common.items.AnyItem;
 import net.mehvahdjukaar.randomium.common.RandomiumDuplicateRecipe;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -43,8 +45,8 @@ public class JEICompat implements IModPlugin {
     private record DuplicateRecipeExtension(RandomiumDuplicateRecipe recipe) implements ICraftingCategoryExtension {
 
         @Override
-            public void drawInfo(int recipeWidth, int recipeHeight, PoseStack poseStack, double mouseX, double mouseY) {
-                Minecraft.getInstance().font.draw(poseStack, I18n.get("randomium.jei.duplicate"), 60.0F, 46.0F, 5592405);
+            public void drawInfo(int recipeWidth, int recipeHeight, GuiGraphics poseStack, double mouseX, double mouseY) {
+            poseStack.drawString(Minecraft.getInstance().font, Component.translatable("randomium.jei.duplicate"), 60, 46, 5592405);
             }
 
             @Override

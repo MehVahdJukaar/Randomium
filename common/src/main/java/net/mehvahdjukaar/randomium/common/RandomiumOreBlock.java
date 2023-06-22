@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import javax.annotation.Nullable;
@@ -51,7 +52,7 @@ public class RandomiumOreBlock extends Block {
     }
 
     @Override
-    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         return getRandomDrops(state, builder.getLevel(), builder.getOptionalParameter(LootContextParams.TOOL),
                 builder.getOptionalParameter(LootContextParams.THIS_ENTITY));
     }
@@ -142,19 +143,6 @@ public class RandomiumOreBlock extends Block {
 
     }
 
-    //TODO: change this on reload
-    //this could be a weighted random list
-    private double total = 0;
-    private final Supplier<NavigableMap<Double, Direction>> map = Suppliers.memoize(()-> new TreeMap<>() {{
-        put(total += CommonConfigs.FLY_CHANCE.get(), Direction.UP);
-        put(total += CommonConfigs.FALL_CHANCE.get(), Direction.DOWN);
-        put(total += CommonConfigs.MOVE_CHANCE.get() / 4d, Direction.NORTH);
-        put(total += CommonConfigs.MOVE_CHANCE.get() / 4d, Direction.SOUTH);
-        put(total += CommonConfigs.MOVE_CHANCE.get() / 4d, Direction.EAST);
-        put(total += CommonConfigs.MOVE_CHANCE.get() / 4d, Direction.WEST);
-        put(total += CommonConfigs.TELEPORT_CHANCE.get(), null);
-    }});
-
     @Override
     public void attack(BlockState state, Level world, BlockPos pos, Player entity) {
         ItemStack tool = entity.getUseItem();
@@ -172,7 +160,7 @@ public class RandomiumOreBlock extends Block {
         if (!world.isClientSide) {
             if (world.random.nextFloat() < chance / 100f) {
 
-                Direction dir = map.get().higherEntry(world.random.nextDouble() * total).getValue();
+                Direction dir = CommonConfigs.getRandomDir(world.random);
 
                 if (dir == null) {
                     this.teleport(state, (ServerLevel) world, pos);

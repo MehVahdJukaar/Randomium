@@ -4,8 +4,11 @@ import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigSpec;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
 import net.mehvahdjukaar.randomium.Randomium;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 
 import java.util.List;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 
 public class CommonConfigs {
@@ -61,12 +64,36 @@ public class CommonConfigs {
         ALLOW_SILK_TOUCH = builder.comment("Allow the block to be silk touched")
                 .define("allow_silk_touch", true);
         builder.pop();
+        builder.onChange(CommonConfigs::onChange);
 
         SPEC = builder.buildAndRegister();
         SPEC.loadFromFile();
+
+
     }
+
+    private static final TreeMap<Double, Direction> EFFECT_MAP = new TreeMap<>();
+    private static double total;
+
+    private static void onChange() {
+        total = 0;
+        EFFECT_MAP.clear();
+
+        EFFECT_MAP.put(total += CommonConfigs.FLY_CHANCE.get(), Direction.UP);
+        EFFECT_MAP.put(total += CommonConfigs.FALL_CHANCE.get(), Direction.DOWN);
+        EFFECT_MAP.put(total += CommonConfigs.MOVE_CHANCE.get() / 4d, Direction.NORTH);
+        EFFECT_MAP.put(total += CommonConfigs.MOVE_CHANCE.get() / 4d, Direction.SOUTH);
+        EFFECT_MAP.put(total += CommonConfigs.MOVE_CHANCE.get() / 4d, Direction.EAST);
+        EFFECT_MAP.put(total += CommonConfigs.MOVE_CHANCE.get() / 4d, Direction.WEST);
+        EFFECT_MAP.put(total += CommonConfigs.TELEPORT_CHANCE.get(), null);
+    }
+
 
     public static void init() {
 
+    }
+
+    public static Direction getRandomDir(RandomSource random) {
+        return EFFECT_MAP.higherEntry(random.nextDouble() * total).getValue();
     }
 }

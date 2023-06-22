@@ -8,5 +8,5 @@
   "block.randomium.randomium_ore_deepslate": "Deepslate Randomium Ore",
   "entity.randomium.moving_block": "End Randomium Ore",
   "item.randomium.any_item": "[Any Item]",
-  "randomium.jei.duplicates": "Duplicates"
+  "randomium.jei.duplicate": "Duplicates"
 }
