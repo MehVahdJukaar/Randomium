@@ -68,6 +68,7 @@ subprojects {
                 changelog = changelogText
                 releaseType = 'release'
                 addGameVersion rootProject.minecraft_version
+                addGameVersion 1.20
                 addGameVersion modLoader.capitalize()
 
                 mainArtifact(tasks.remapJar)

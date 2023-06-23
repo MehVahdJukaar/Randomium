@@ -31,6 +31,9 @@ public class CommonConfigs {
 
     public static final Supplier<Randomium.ListMode> LOOT_MODE;
 
+    private static final TreeMap<Double, Direction> EFFECT_MAP = new TreeMap<>();
+    private static double total;
+
     static {
         ConfigBuilder builder = ConfigBuilder.create(Randomium.res("common"), ConfigType.COMMON);
         builder.push("interactions");
@@ -68,12 +71,8 @@ public class CommonConfigs {
 
         SPEC = builder.buildAndRegister();
         SPEC.loadFromFile();
-
-
     }
 
-    private static final TreeMap<Double, Direction> EFFECT_MAP = new TreeMap<>();
-    private static double total;
 
     private static void onChange() {
         total = 0;
