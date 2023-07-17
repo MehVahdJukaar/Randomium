@@ -5,8 +5,12 @@ import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.mehvahdjukaar.randomium.RandomiumClient;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.CreativeModeTabRegistry;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
@@ -25,23 +29,21 @@ public class RandomiumForge {
 
     public RandomiumForge() {
 
-        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        bus.addListener(RandomiumForge::init);
-
         Randomium.commonInit();
         if (PlatHelper.getPhysicalSide().isClient()) {
             RandomiumClient.init();
         }
+        PlatHelper.addCommonSetup(Randomium::commonSetup);
 
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    @SubscribeEvent
+    public void onWorldLoad(LevelEvent.Load event){
+        Randomium.populateLoot((Level) event.getLevel());
     }
 
     //TODO: REI RECIPE
-
-
-    public static void init(final FMLCommonSetupEvent event) {
-        event.enqueueWork(Randomium::commonSetup);
-    }
-
 
 
 }

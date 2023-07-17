@@ -37,12 +37,11 @@ import java.util.function.Supplier;
 
 public class Randomium {
     public static final String MOD_ID = "randomium";
+    public static final Logger LOGGER = LogManager.getLogger();
 
     public static ResourceLocation res(String name) {
         return new ResourceLocation(MOD_ID, name);
     }
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     public static final Supplier<Block> RANDOMIUM_ORE = RegHelper.registerBlockWithItem(res("randomium_ore"), () ->
             new RandomiumOreBlock(BlockBehaviour.Properties.copy(Blocks.STONE)

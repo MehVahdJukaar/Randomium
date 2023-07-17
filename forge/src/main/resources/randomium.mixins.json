@@ -6,8 +6,10 @@
   "client": [
   ],
   "mixins": [
+    "ServerSafeCreativeTabsMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "plugin": "net.mehvahdjukaar.randomium.mixins.forge.MixinPlugin"
 }

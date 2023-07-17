@@ -1,1 +1,1 @@
-fixed messup
+fixed drops not workig on dedicated server
