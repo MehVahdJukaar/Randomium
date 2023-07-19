@@ -84,6 +84,10 @@ public class Randomium {
     public static void commonInit() {
         CommonConfigs.init();
 
+        PlatHelper.addCommonSetup(Randomium::commonSetup);
+        if(PlatHelper.getPhysicalSide().isClient()) {
+            RandomiumClient.init();
+        }
         RegHelper.addItemsToTabsRegistration(Randomium::addItemsToTab);
     }
 

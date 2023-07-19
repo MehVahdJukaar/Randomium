@@ -30,10 +30,6 @@ public class RandomiumForge {
     public RandomiumForge() {
 
         Randomium.commonInit();
-        if (PlatHelper.getPhysicalSide().isClient()) {
-            RandomiumClient.init();
-        }
-        PlatHelper.addCommonSetup(Randomium::commonSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
     }

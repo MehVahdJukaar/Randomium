@@ -3,6 +3,8 @@ package net.mehvahdjukaar.randomium.fabric;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.fabric.MLFabricSetupCallbacks;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.mehvahdjukaar.randomium.RandomiumClient;
@@ -17,13 +19,12 @@ public class RandomiumFabric implements ModInitializer {
     public void onInitialize() {
 
         Randomium.commonInit();
-        MLFabricSetupCallbacks.COMMON_SETUP.add(RandomiumFabric::commonSetup);
-        MLFabricSetupCallbacks.CLIENT_SETUP.add(RandomiumClient::init);
+
+        PlatHelper.addCommonSetup(RandomiumFabric::commonSetup);
         ServerWorldEvents.LOAD.register((s, l) -> Randomium.populateLoot(l));
     }
 
     private static void commonSetup() {
-        Randomium.commonSetup();
         BiomeModifications.addFeature(context -> context.hasTag(BiomeTags.IS_OVERWORLD) || context.hasTag(BiomeTags.IS_END),
                 GenerationStep.Decoration.UNDERGROUND_ORES,
                 ResourceKey.create(Registries.PLACED_FEATURE, Randomium.res("ore_randomium")));
