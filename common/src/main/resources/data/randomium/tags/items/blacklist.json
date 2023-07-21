@@ -12,14 +12,14 @@
     "minecraft:repeating_command_block",
     "minecraft:jigsaw",
     "minecraft:structure_block",
-    "minecraft:structure_void"
-  ],
-  "optional": [
-    "computercraft:computer_command",
-    "create:creative_motor",
-    "create:creative_fluid_tank",
-    "create:creative_crate",
-    "create:creative_blaze_cake",
-    "create:handheld_worldshaper"
+    "minecraft:structure_void",
+    {"id": "computercraft:computer_command", "required": false},
+    {"id": "create:creative_motor", "required": false},
+    {"id": "create:creative_fluid_tank", "required": false},
+    {"id": "create:creative_crate", "required": false},
+    {"id": "create:handheld_worldshaper", "required": false},
+    {"id": "create:copper_backtank_placeable", "required": false},
+    {"id": "create:netherite_backtank_placeable", "required": false},
+    {"id": "create:creative_blaze_cake", "required": false}
   ]
 }
