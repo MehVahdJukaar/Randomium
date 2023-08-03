@@ -75,7 +75,8 @@ public class RandomiumOreBlock extends Block {
         }
 
         //world rng is better
-         if (tool != null && CommonConfigs.ALLOW_SILK_TOUCH.get() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) != 0)
+         if (tool != null && CommonConfigs.ALLOW_SILK_TOUCH.get() && 
+             EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) != 0){
             loot = new ItemStack(this.asItem());
          }
          else if (world.random.nextFloat() * 100 <= percentage) {
