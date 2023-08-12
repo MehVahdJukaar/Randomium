@@ -41,7 +41,7 @@ public class RandomiumOreBlock extends Block {
 
     public static final BooleanProperty LIT = RedstoneTorchBlock.LIT;
 
-    private static final RandomSource RANDOM = RandomSource.create();
+    private static final RandomSource RANDOM = RandomSource.createNewThreadLocalInstance();
 
     public RandomiumOreBlock(Properties properties) {
         super(properties.lightLevel(s -> s.getValue(LIT) ? 4 : 0));
@@ -90,7 +90,7 @@ public class RandomiumOreBlock extends Block {
 
     @PlatformOnly(PlatformOnly.FORGE)
     public int getExpDrop(BlockState state, LevelReader world, BlockPos pos, int fortune, int silktouch) {
-        return silktouch == 0 ? Mth.nextInt(RANDOM, 0, 6) : 0;
+        return silktouch == 0 ? Mth.nextInt(world instanceof Level l ?l.getRandom() : RANDOM, 0, 6) : 0;
     }
 
     @Override
