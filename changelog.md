@@ -1,1 +1,2 @@
-fixed drops not workig on dedicated server
+- fixed a concurrency issue
+- fixed a slink touch exploit

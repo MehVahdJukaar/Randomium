@@ -1,6 +1,5 @@
 package net.mehvahdjukaar.randomium.common;
 
-import com.google.common.base.Suppliers;
 import dev.architectury.injectables.annotations.PlatformOnly;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.minecraft.core.BlockPos;
@@ -27,13 +26,13 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import javax.annotation.Nullable;
-import java.util.*;
-import java.util.function.Supplier;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class RandomiumOreBlock extends Block {
 
@@ -75,15 +74,12 @@ public class RandomiumOreBlock extends Block {
         }
 
         //world rng is better
-         if (tool != null && CommonConfigs.ALLOW_SILK_TOUCH.get() && 
-             EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) != 0){
+        if (tool != null && CommonConfigs.ALLOW_SILK_TOUCH.get() &&
+                EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) != 0) {
             loot = new ItemStack(this.asItem());
-         }
-         else if (world.random.nextFloat() * 100 <= percentage) {
-
+        } else if (world.random.nextFloat() * 100 <= percentage) {
             loot = new ItemStack(Randomium.RANDOMIUM_ITEM.get());
-         }
-         else {
+        } else {
             loot = Randomium.getRandomItem(world, world.random);
         }
         return Collections.singletonList(loot);
@@ -268,19 +264,18 @@ public class RandomiumOreBlock extends Block {
     //todo: add custom ones
     //redstone ore stuff
     private static void spawnParticles(Level world, BlockPos pos) {
-        double d0 = 0.5625D;
         RandomSource random = world.random;
 
         for (Direction direction : Direction.values()) {
             if (random.nextInt(5) == 0) {
                 BlockPos blockpos = pos.relative(direction);
                 if (!world.getBlockState(blockpos).isSolidRender(world, blockpos)) {
-                    Direction.Axis direction$axis = direction.getAxis();
-                    double d1 = direction$axis == Direction.Axis.X ? 0.5D + 0.5625D * (double) direction.getStepX() : (double) random.nextFloat();
-                    double d2 = direction$axis == Direction.Axis.Y ? 0.5D + 0.5625D * (double) direction.getStepY() : (double) random.nextFloat();
-                    double d3 = direction$axis == Direction.Axis.Z ? 0.5D + 0.5625D * (double) direction.getStepZ() : (double) random.nextFloat();
+                    Direction.Axis axis = direction.getAxis();
+                    double d1 = axis == Direction.Axis.X ? 0.5D + 0.5625D * direction.getStepX() : random.nextFloat();
+                    double d2 = axis == Direction.Axis.Y ? 0.5D + 0.5625D * direction.getStepY() : random.nextFloat();
+                    double d3 = axis == Direction.Axis.Z ? 0.5D + 0.5625D * direction.getStepZ() : random.nextFloat();
 
-                    world.addParticle(ParticleTypes.WITCH, (double) pos.getX() + d1, (double) pos.getY() + d2, (double) pos.getZ() + d3, 0.0D, -0.1D, 0.0D);
+                    world.addParticle(ParticleTypes.WITCH, pos.getX() + d1, pos.getY() + d2, pos.getZ() + d3, 0.0D, -0.1D, 0.0D);
                 }
             }
         }
