@@ -77,12 +77,11 @@ public class RandomiumOreBlock extends Block {
         }
 
         //world rng is better
-        if (world.random.nextFloat() * 100 <= percentage) {
-
-            loot = new ItemStack(Randomium.RANDOMIUM_ITEM.get());
-        } else if (tool != null && CommonConfigs.ALLOW_SILK_TOUCH.get() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) != 0)
+        if (tool != null && CommonConfigs.ALLOW_SILK_TOUCH.get() && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) != 0) {
             loot = new ItemStack(this.asItem());
-        else {
+        } else if (world.random.nextFloat() * 100 <= percentage) {
+            loot = new ItemStack(Randomium.RANDOMIUM_ITEM.get());
+        } else {
             loot = Randomium.getRandomItem(world.random);
         }
         return Collections.singletonList(loot);
@@ -90,7 +89,7 @@ public class RandomiumOreBlock extends Block {
 
     @PlatformOnly(PlatformOnly.FORGE)
     public int getExpDrop(BlockState state, LevelReader world, BlockPos pos, int fortune, int silktouch) {
-        return silktouch == 0 ? Mth.nextInt(world instanceof Level l ?l.getRandom() : RANDOM, 0, 6) : 0;
+        return silktouch == 0 ? Mth.nextInt(world instanceof Level l ? l.getRandom() : RANDOM, 0, 6) : 0;
     }
 
     @Override
@@ -148,7 +147,7 @@ public class RandomiumOreBlock extends Block {
     //TODO: change this on reload
     //this could be a weighted random list
     private double total = 0;
-    private final Supplier<NavigableMap<Double, Direction>> map = Suppliers.memoize(()-> new TreeMap<>() {{
+    private final Supplier<NavigableMap<Double, Direction>> map = Suppliers.memoize(() -> new TreeMap<>() {{
         put(total += CommonConfigs.FLY_CHANCE.get(), Direction.UP);
         put(total += CommonConfigs.FALL_CHANCE.get(), Direction.DOWN);
         put(total += CommonConfigs.MOVE_CHANCE.get() / 4d, Direction.NORTH);
