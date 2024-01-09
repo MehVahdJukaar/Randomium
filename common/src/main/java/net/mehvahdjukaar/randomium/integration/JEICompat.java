@@ -10,6 +10,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.mehvahdjukaar.randomium.common.items.AnyItem;
 import net.mehvahdjukaar.randomium.common.RandomiumDuplicateRecipe;
@@ -38,7 +39,9 @@ public class JEICompat implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registry) {
-        registry.addRecipes(RecipeTypes.CRAFTING, List.of(AnyItem.createDuplicateRecipe()));
+        if (!PlatHelper.isModLoaded("roughly_enough_items")) {
+            registry.addRecipes(RecipeTypes.CRAFTING, List.of(AnyItem.createDuplicateRecipe()));
+        }
     }
 
 

@@ -105,5 +105,14 @@ dependencies {
 
     implementation 'org.jetbrains:annotations:22.0.0'
 
+    modCompileOnly("curse.maven:jei-238222:4712868")
+    modImplementation("curse.maven:roughly-enough-items-310111:4951142")
+
+    modRuntimeOnly("curse.maven:architectury-api-419699:4663010") // REI
+
+    modRuntimeOnly("curse.maven:cloth-config-348521:4973441") // REI
+
+    annotationProcessor 'net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5'
+
     modImplementation("net.mehvahdjukaar:moonlight-forge:${project.moonlight_version}")
 }

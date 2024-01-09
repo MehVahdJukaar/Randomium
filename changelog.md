@@ -1,2 +1,1 @@
-- fixed a concurrency issue
-- fixed a slink touch exploit
+fixed an issue with REI
