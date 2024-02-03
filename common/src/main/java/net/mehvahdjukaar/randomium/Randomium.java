@@ -85,7 +85,7 @@ public class Randomium {
         CommonConfigs.init();
 
         PlatHelper.addCommonSetup(Randomium::commonSetup);
-        if(PlatHelper.getPhysicalSide().isClient()) {
+        if (PlatHelper.getPhysicalSide().isClient()) {
             RandomiumClient.init();
         }
         RegHelper.addItemsToTabsRegistration(Randomium::addItemsToTab);
@@ -112,7 +112,8 @@ public class Randomium {
 
     //tabs arent even ready in mod setup...
     public static void populateLoot(Level level) {
-        if(!CreativeModeTabs.getDefaultTab().hasAnyItems()) {
+        if (level.isClientSide) return;
+        if (!CreativeModeTabs.getDefaultTab().hasAnyItems()) {
             CreativeModeTabs.tryRebuildTabContents(level.enabledFeatures(), false, level.registryAccess());
         }
         Map<Item, List<ItemStack>> temp = new HashMap<>();
