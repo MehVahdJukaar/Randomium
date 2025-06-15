@@ -1,22 +1,27 @@
 architectury {
-    common(rootProject.enabled_platforms.split(","))
+    common(enabled_platforms.split(",")){
+        //it.platformPackage("neoforge", "forge")
+    }
+}
+loom {
+    accessWidenerPath = file("src/main/resources/${mod_id}.accesswidener")
 }
 
-loom {
-    accessWidenerPath = file("src/main/resources/randomium.accesswidener")
+shadowJar {
+    zip64 true
+
 }
 
 dependencies {
-    // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
-    // Do NOT use other classes from fabric loader
+
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
-    //implementation fileTree(dir: 'mods', include: '*.jar')
+    modImplementation("net.mehvahdjukaar:moonlight:${project.moonlight_version}")
 
-    modImplementation ("net.mehvahdjukaar:moonlight:${rootProject.moonlight_version}")
+    modCompileOnly("curse.maven:jei-238222:5846878")
+    modCompileOnly("curse.maven:roughly-enough-items-310111:5731643")
+    modCompileOnly("curse.maven:emi-580555:6361996")
 
-    modCompileOnly("curse.maven:jei-238222:4712868")
-    modCompileOnly("curse.maven:roughly-enough-items-310111:4951142")
 }
 
 publishing {

@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.randomium.forge;
+package net.mehvahdjukaar.randomium.neoforge;
 
 import net.mehvahdjukaar.randomium.common.items.RandomiumItem;
 import net.minecraftforge.api.distmarker.Dist;

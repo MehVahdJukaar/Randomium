@@ -1,7 +1,7 @@
-package net.mehvahdjukaar.randomium.forge;
+package net.mehvahdjukaar.randomium.neoforge;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.neoforged.neoforge.capabilities.Capabilities;
 
 public class RandomiumPlatStuffImpl {
 
@@ -10,6 +10,6 @@ public class RandomiumPlatStuffImpl {
     }
 
     public static boolean hasCapability(ItemStack stack) {
-        return stack.getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent();
+        return stack.getCapability(Capabilities.ItemHandler.ITEM) != null;
     }
 }

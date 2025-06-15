@@ -18,7 +18,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
@@ -40,21 +39,21 @@ public class Randomium {
     public static final Logger LOGGER = LogManager.getLogger();
 
     public static ResourceLocation res(String name) {
-        return new ResourceLocation(MOD_ID, name);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
     }
 
     public static final Supplier<Block> RANDOMIUM_ORE = RegHelper.registerBlockWithItem(res("randomium_ore"), () ->
-            new RandomiumOreBlock(BlockBehaviour.Properties.copy(Blocks.STONE)
+            new RandomiumOreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)
                     .requiresCorrectToolForDrops()
                     .strength(4.0F, 3.0F)));
 
     public static final Supplier<Block> RANDOMIUM_ORE_DEEP = RegHelper.registerBlockWithItem(res("randomium_ore_deepslate"), () ->
-            new RandomiumOreBlock(BlockBehaviour.Properties.copy(Blocks.DEEPSLATE)
+            new RandomiumOreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)
                     .requiresCorrectToolForDrops()
                     .strength(5.25F, 3.0F)));
 
     public static final Supplier<Block> RANDOMIUM_ORE_END = RegHelper.registerBlockWithItem(res("randomium_ore_end"), () ->
-            new RandomiumOreBlock(BlockBehaviour.Properties.copy(Blocks.END_STONE)
+            new RandomiumOreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.END_STONE)
                     .requiresCorrectToolForDrops()
                     .strength(4.0F, 3.0F)));
 
