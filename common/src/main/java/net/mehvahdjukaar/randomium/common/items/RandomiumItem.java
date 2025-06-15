@@ -5,21 +5,20 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Random;
 
 
 public class RandomiumItem extends Item {
-    public RandomiumItem(Properties p_i48487_1_) {
-        super(p_i48487_1_);
+    public RandomiumItem(Properties prop) {
+        super(prop);
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> text, TooltipFlag tooltipFlag) {
-        text.add((Component.translatable("message.randomium.description")).withStyle(ChatFormatting.DARK_PURPLE));
+        text.add((Component.translatable("message.randomium.description"))
+                .withStyle(ChatFormatting.DARK_PURPLE));
         super.appendHoverText(stack, context, text, tooltipFlag);
     }
 
@@ -38,25 +37,25 @@ public class RandomiumItem extends Item {
 
     @Override
     public String getDescriptionId() {
-        renderingTooltip = true;
+        IS_RENDERING_TOOLTIP = true;
         return crazy ? OBFUSCATE_TEXT : super.getDescriptionId();
     }
 
-    private static int minCooldown = 0;
-    private static boolean renderingTooltip;
+    private static int MIN_COOLDOWN = 0;
+    private static boolean IS_RENDERING_TOOLTIP;
 
     public static void tickEffects() {
-        if (renderingTooltip) {
-            if (minCooldown == 0) {
+        if (IS_RENDERING_TOOLTIP) {
+            if (MIN_COOLDOWN == 0) {
                 if (crazy) {
                     if (RANDOM.nextInt(4) == 0) crazy = false;
                 } else {
                     if (RANDOM.nextInt(16) == 0) crazy = true;
                 }
-                minCooldown = 17;
-            } else minCooldown--;
+                MIN_COOLDOWN = 17;
+            } else MIN_COOLDOWN--;
         }
-        renderingTooltip = false;
+        IS_RENDERING_TOOLTIP = false;
 
     }
 }

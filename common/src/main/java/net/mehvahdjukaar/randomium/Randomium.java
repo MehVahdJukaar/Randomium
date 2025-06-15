@@ -106,14 +106,13 @@ public class Randomium {
         }
 
         SHUFFLED_ANY_ITEM.clear();
-        SHUFFLED_ANY_ITEM.addAll(LOOT.stream().map(l -> l.get(0)).toList());
+        SHUFFLED_ANY_ITEM.addAll(LOOT.stream().map(List::getFirst).toList());
         Collections.shuffle(SHUFFLED_ANY_ITEM);
 
     }
 
     //tabs arent even ready in mod setup...
     public static void populateLoot(Level level) {
-        if (level.isClientSide) return;
         if (!CreativeModeTabs.getDefaultTab().hasAnyItems()) {
             CreativeModeTabs.tryRebuildTabContents(level.enabledFeatures(), false, level.registryAccess());
         }

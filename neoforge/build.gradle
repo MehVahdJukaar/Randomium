@@ -88,7 +88,6 @@ publishing {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-    //forge "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     neoForge "net.neoforged:neoforge:${neo_version}"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
@@ -97,11 +96,11 @@ dependencies {
     implementation 'org.jetbrains:annotations:22.0.0'
 
     modImplementation("net.mehvahdjukaar:moonlight-neoforge:${project.moonlight_version}")
-    //modCompileOnly("net.mehvahdjukaar:heartstone-forge:1.19.2-1.1.2")
+
     //modImplementation ("curse.maven:selene-499980:6610968")
-    modCompileOnly ("curse.maven:jei-238222:6600227")
+    modImplementation ("curse.maven:jei-238222:6600227")
     modCompileOnly("curse.maven:roughly-enough-items-310111:4951142")
 
-    modImplementation("curse.maven:emi-580555:5704405")
+    modCompileOnly("curse.maven:emi-580555:5704405")
 
 }

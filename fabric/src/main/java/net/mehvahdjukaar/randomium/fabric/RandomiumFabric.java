@@ -15,7 +15,6 @@ public class RandomiumFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        ConventionalItemTags.ORES
         Randomium.commonInit();
 
         PlatHelper.addCommonSetup(RandomiumFabric::commonSetup);

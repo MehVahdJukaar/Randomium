@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.randomium.neoforge;
 
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
@@ -20,10 +21,14 @@ public class RandomiumForge {
         Randomium.commonInit();
 
         NeoForge.EVENT_BUS.register(this);
+
+        if (PlatHelper.getPhysicalSide().isClient()) {
+            NeoForge.EVENT_BUS.register(RandomiumForgeClient.class);
+        }
     }
 
     @SubscribeEvent
-    public void onWorldLoad(LevelEvent.Load event){
+    public void onWorldLoad(LevelEvent.Load event) {
         Randomium.populateLoot((Level) event.getLevel());
     }
 
