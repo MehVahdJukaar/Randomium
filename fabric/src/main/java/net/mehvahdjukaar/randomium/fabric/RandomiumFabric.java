@@ -3,6 +3,7 @@ package net.mehvahdjukaar.randomium.fabric;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.minecraft.core.registries.Registries;
@@ -14,7 +15,7 @@ public class RandomiumFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-
+        ConventionalItemTags.ORES
         Randomium.commonInit();
 
         PlatHelper.addCommonSetup(RandomiumFabric::commonSetup);
