@@ -1,8 +1,6 @@
 package net.mehvahdjukaar.randomium.common.items;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.injectables.annotations.PlatformOnly;
-import net.mehvahdjukaar.moonlight.api.client.ICustomItemRendererProvider;
 import net.mehvahdjukaar.moonlight.api.client.ItemStackRenderer;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.mehvahdjukaar.randomium.RandomiumPlatStuff;
@@ -11,19 +9,17 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public class AnyItem extends Item implements ICustomItemRendererProvider {
-    public AnyItem(Properties p_i48487_1_) {
-        super(p_i48487_1_);
+public class AnyItem extends Item {
+    public AnyItem(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -37,16 +33,6 @@ public class AnyItem extends Item implements ICustomItemRendererProvider {
     public String getCreatorModId(ItemStack itemStack) {
         ItemStack s = Randomium.getAnyItem();
         return RandomiumPlatStuff.getModId(s);
-    }
-
-    @Override
-    public @NotNull Rarity getRarity(ItemStack stack) {
-        return Randomium.getAnyItem().getRarity();
-    }
-
-    @Override
-    public Supplier<ItemStackRenderer> getRendererFactory() {
-        return DuplicateItemRenderer::new;
     }
 
     public static CraftingRecipe createDuplicateRecipe() {

@@ -10,6 +10,7 @@ import net.mehvahdjukaar.randomium.common.RandomiumOreBlock;
 import net.mehvahdjukaar.randomium.common.items.AnyItem;
 import net.mehvahdjukaar.randomium.common.items.RandomiumItem;
 import net.minecraft.Util;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -99,7 +100,7 @@ public class Randomium {
     public static void commonSetup() {
         //yay for oneliners
         for (var block : BuiltInRegistries.BLOCK) {
-            var sound = block.getSoundType(block.defaultBlockState());
+            var sound = block.defaultBlockState().getSoundType();
             if (!SOUNDS.contains(sound)) SOUNDS.add(sound);
         }
 
@@ -161,8 +162,9 @@ public class Randomium {
     private static final List<ItemStack> SHUFFLED_ANY_ITEM = new ArrayList<>();
     private static final List<SoundType> SOUNDS = new ArrayList<>();
 
-    public static final TagKey<Item> BLACKLIST = TagKey.create(Registries.ITEM, res("blacklist"));
-    public static final TagKey<Item> WHITELIST = TagKey.create(Registries.ITEM, res("whitelist"));
+    public static final TagKey<Item> BLACKLIST = TagKey.create(Registries.ITEM, res("randomium_blacklist"));
+    public static final TagKey<Item> WHITELIST = TagKey.create(Registries.ITEM, res("randomium_whitelist"));
+    public static final TagKey<DataComponentType<?>> COMPONENT_BLACKLIST = TagKey.create(Registries.DATA_COMPONENT_TYPE, res("randomium_whitelist"));
 
     private static final Predicate<ItemStack> VALID_DROP = (i) -> {
         if (i.getItem() == Items.AIR) return false;

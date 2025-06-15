@@ -10,9 +10,11 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
@@ -55,18 +57,18 @@ public class MovingBlockEntity extends FallingBlockEntity implements IExtraClien
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return (Packet<ClientGamePacketListener>) PlatHelper.getEntitySpawnPacket(this);
+    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity entity) {
+        return PlatHelper.getEntitySpawnPacket(this, entity);
     }
 
     @Override
-    public void writeSpawnData(FriendlyByteBuf buffer) {
+    public void writeSpawnData(RegistryFriendlyByteBuf buffer) {
         buffer.writeInt(Block.getId(this.getBlockState()));
         buffer.writeEnum(this.gravityDirection);
     }
 
     @Override
-    public void readSpawnData(FriendlyByteBuf additionalData) {
+    public void readSpawnData(RegistryFriendlyByteBuf additionalData) {
         this.state = Block.stateById(additionalData.readInt());
         this.gravityDirection = additionalData.readEnum(Direction.class);
     }

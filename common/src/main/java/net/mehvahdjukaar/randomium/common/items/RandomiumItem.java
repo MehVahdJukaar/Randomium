@@ -6,8 +6,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
@@ -18,9 +18,9 @@ public class RandomiumItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> text, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> text, TooltipFlag tooltipFlag) {
         text.add((Component.translatable("message.randomium.description")).withStyle(ChatFormatting.DARK_PURPLE));
-        super.appendHoverText(stack, world, text, tooltipFlag);
+        super.appendHoverText(stack, context, text, tooltipFlag);
     }
 
     //TODO: use this for trollium

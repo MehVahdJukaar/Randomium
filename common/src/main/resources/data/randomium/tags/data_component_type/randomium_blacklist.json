@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:block_entity_data",
+    "minecraft:entity_data",
+    "minecraft:container",
+    "minecraft:container_loot",
+    "minecraft:bees",
+    "minecraft:bundle_content",
+    "minecraft:bucket_entity_data",
+    {"id": "supplementaries:lunch_basket_content", "required": false},
+    {"id": "supplementaries:quiver_content", "required": false},
+    {"id": "supplementaries:mob_holder_content", "required": false}
+  ]
+}

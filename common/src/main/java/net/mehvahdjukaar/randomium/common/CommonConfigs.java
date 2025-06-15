@@ -1,8 +1,8 @@
 package net.mehvahdjukaar.randomium.common;
 
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
-import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigSpec;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
+import net.mehvahdjukaar.moonlight.api.platform.configs.ModConfigHolder;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 public class CommonConfigs {
 
-    public static final ConfigSpec SPEC;
+    public static final ModConfigHolder SPEC;
 
     public static final Supplier<Integer> EXCITE_ON_ATTACK_CHANCE;
     public static final Supplier<Integer> EXCITE_ON_BLOCK_UPDATE_CHANCE;
@@ -72,8 +72,8 @@ public class CommonConfigs {
         builder.pop();
         builder.onChange(CommonConfigs::onChange);
 
-        SPEC = builder.buildAndRegister();
-        SPEC.loadFromFile();
+        SPEC = builder.build();
+        SPEC.forceLoad();
     }
 
 

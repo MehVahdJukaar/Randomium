@@ -2,13 +2,12 @@ package net.mehvahdjukaar.randomium.common;
 
 import net.mehvahdjukaar.randomium.Randomium;
 import net.mehvahdjukaar.randomium.RandomiumPlatStuff;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
@@ -17,8 +16,8 @@ import net.minecraft.world.level.Level;
 public class RandomiumDuplicateRecipe extends CustomRecipe {
 
 
-    public RandomiumDuplicateRecipe(ResourceLocation resourceLocation, CraftingBookCategory craftingBookCategory) {
-        super(resourceLocation, craftingBookCategory);
+    public RandomiumDuplicateRecipe(CraftingBookCategory craftingBookCategory) {
+        super(craftingBookCategory);
     }
 
     private boolean isRandomium(ItemStack stack) {
@@ -27,30 +26,22 @@ public class RandomiumDuplicateRecipe extends CustomRecipe {
 
     private boolean canBeDuplicated(ItemStack stack) {
 
-        CompoundTag tag = stack.getTag();
-        if (tag != null) {
-            if (RandomiumPlatStuff.hasCapability(stack)) return false;
-            String s = tag.toString();
-            //can never be too careful
-            if (s.contains("Items:[") || s.contains("BlockEntityTag") ||
-                    s.contains("Inventory:[") ||
-                    s.contains("Drawers:[") ||
-                    s.contains("randomium:randomium") ||
-                    s.contains("randomium:randomium_ore") ||
-                    s.contains("randomium:randomium_ore_deepslate") ||
-                    s.contains("randomium:randomium_ore_end")) {
-                return false;
-            }
+        if (RandomiumPlatStuff.hasCapability(stack)) return false;
+        if (stack.getComponents().stream()
+                .map(c -> BuiltInRegistries.DATA_COMPONENT_TYPE.wrapAsHolder(c.type()))
+                .anyMatch(h -> h.is(Randomium.COMPONENT_BLACKLIST))
+        ) {
+            return false;
         }
         return !stack.is(Randomium.BLACKLIST);
     }
 
     @Override
-    public boolean matches(CraftingContainer inv, Level worldIn) {
+    public boolean matches(CraftingInput inv, Level level) {
         ItemStack toDuplicate = null;
         ItemStack randomium = null;
 
-        for (int i = 0; i < inv.getContainerSize(); ++i) {
+        for (int i = 0; i < inv.size(); ++i) {
             ItemStack stack = inv.getItem(i);
             if (!stack.isEmpty()) {
 
@@ -74,8 +65,8 @@ public class RandomiumDuplicateRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer inv, RegistryAccess registryAccess) {
-        for (int i = 0; i < inv.getContainerSize(); ++i) {
+    public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registries) {
+        for (int i = 0; i < inv.size(); ++i) {
             ItemStack stack = inv.getItem(i);
             if (!stack.isEmpty() && !isRandomium(stack) && canBeDuplicated(stack)) {
                 ItemStack s = stack.copy();
@@ -88,8 +79,8 @@ public class RandomiumDuplicateRecipe extends CustomRecipe {
 
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(CraftingContainer inv) {
-        NonNullList<ItemStack> nonnulllist = NonNullList.withSize(inv.getContainerSize(), ItemStack.EMPTY);
+    public NonNullList<ItemStack> getRemainingItems(CraftingInput inv) {
+        NonNullList<ItemStack> nonnulllist = NonNullList.withSize(inv.size(), ItemStack.EMPTY);
 
         for (int i = 0; i < nonnulllist.size(); ++i) {
             ItemStack itemstack = inv.getItem(i).copy();
