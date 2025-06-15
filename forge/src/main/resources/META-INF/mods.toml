@@ -3,7 +3,7 @@ modLoader="javafml" #mandatory
 
 loaderVersion="[40,)"
 
-license="All rights reserved"
+license="Supplementaries Team License v1.1"
 
 [[mods]] #mandatory
 # The modid of the mod

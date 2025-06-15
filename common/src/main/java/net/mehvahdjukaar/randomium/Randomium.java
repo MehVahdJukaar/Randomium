@@ -3,12 +3,10 @@ package net.mehvahdjukaar.randomium;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
-import net.mehvahdjukaar.randomium.common.CommonConfigs;
-import net.mehvahdjukaar.randomium.common.MovingBlockEntity;
-import net.mehvahdjukaar.randomium.common.RandomiumDuplicateRecipe;
-import net.mehvahdjukaar.randomium.common.RandomiumOreBlock;
+import net.mehvahdjukaar.randomium.common.*;
 import net.mehvahdjukaar.randomium.common.items.AnyItem;
 import net.mehvahdjukaar.randomium.common.items.RandomiumItem;
+import net.mehvahdjukaar.randomium.common.items.TrolliumItem;
 import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -26,6 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,8 +57,30 @@ public class Randomium {
                     .requiresCorrectToolForDrops()
                     .strength(4.0F, 3.0F)));
 
+
+    public static final Supplier<Block> RANDOMIUM_BLOCK = RegHelper.registerBlockWithItem(res("randomium_block"), () ->
+            new RandomiumBlock(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK)));
+
+    public static final Supplier<BlockEntityType<RandomiumBlockEntity>> RANDOMIUM_BLOCK_ENTITY = RegHelper.registerBlockEntityType(
+            res("randomium_block"), RandomiumBlockEntity::new, RANDOMIUM_BLOCK.get());
+
+    public static final Supplier<Block> TROLLIUM_ORE = RegHelper.registerBlockWithItem(res("trollium_ore"), () ->
+            new TrolliumOreBlock(BlockBehaviour.Properties.copy(Blocks.STONE)));
+
+    public static final Supplier<Block> TROLLIUM_ORE_DEEP = RegHelper.registerBlockWithItem(res("trollium_ore_deepslate"), () ->
+            new TrolliumOreBlock(BlockBehaviour.Properties.copy(Blocks.STONE)));
+
+    public static final Supplier<BlockEntityType<TrolliumBlockEntity>> TROLLIUM_BLOCK_ENTITY = RegHelper.registerBlockEntityType(
+            res("trollium_block"), TrolliumBlockEntity::new, TROLLIUM_ORE.get(), TROLLIUM_ORE_DEEP.get());
+
     public static final Supplier<Item> RANDOMIUM_ITEM = RegHelper.registerItem(res("randomium"), () ->
             new RandomiumItem(new Item.Properties().rarity(Rarity.EPIC)));
+
+    public static final Supplier<Item> TROLLIUM_ITEM = RegHelper.registerItem(res("trollium"), () ->
+            new TrolliumItem(new Item.Properties().rarity(Rarity.EPIC)));
+
+    public static final Supplier<Item> TROLLIUM_SHARD = RegHelper.registerItem(res("trollium_shard"), () ->
+            new TrolliumItem(new Item.Properties().rarity(Rarity.RARE)));
 
     public static final Supplier<Item> DUPLICATE_ITEM = RegHelper.registerItem(Randomium.res("any_item"), () ->
             new AnyItem(new Item.Properties()));
@@ -89,6 +110,18 @@ public class Randomium {
             RandomiumClient.init();
         }
         RegHelper.addItemsToTabsRegistration(Randomium::addItemsToTab);
+
+        //Randomium block idea:
+        // glowing overlay pulsating
+        // ender dragon light
+        //zapping
+        // starting at the player
+        // hovers
+        // spins really fafst
+        // sprinkles paticles around
+        // quickly morphs into blocks
+        // spirals around
+        // eating trollium
     }
 
     private static void addItemsToTab(RegHelper.ItemToTabEvent event) {
@@ -161,6 +194,7 @@ public class Randomium {
     private static final List<List<ItemStack>> LOOT = new ArrayList<>();
     private static final List<ItemStack> SHUFFLED_ANY_ITEM = new ArrayList<>();
     private static final List<SoundType> SOUNDS = new ArrayList<>();
+    private static final List<Block> TROLLIUM_MIMICS = new ArrayList<>();
 
     public static final TagKey<Item> BLACKLIST = TagKey.create(Registries.ITEM, res("blacklist"));
     public static final TagKey<Item> WHITELIST = TagKey.create(Registries.ITEM, res("whitelist"));

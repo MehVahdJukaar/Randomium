@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:diamond_ore",
+    "minecraft:emerald",
+    "minecraft:redstone",
+    "minecraft:gold_ingot",
+    "minecraft:iron_ingot",
+    "minecraft:coal"
+  ]
+}

@@ -3,6 +3,8 @@
   "values": [
     "randomium:randomium_ore",
     "randomium:randomium_ore_deepslate",
-    "randomium:randomium_ore_end"
+    "randomium:randomium_ore_end",
+    "randomium:trollium_ore",
+    "randomium:trollium_ore_deepslate"
   ]
 }

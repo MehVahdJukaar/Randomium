@@ -11,7 +11,7 @@
     "homepage": "https://fabricmc.net/",
     "sources": "https://github.com/FabricMC/fabric-example-mod"
   },
-  "license": "ARR",
+  "license": "Supplementaries Team License v1.1",
   "icon": "icon.png",
   "environment": "*",
   "entrypoints": {
