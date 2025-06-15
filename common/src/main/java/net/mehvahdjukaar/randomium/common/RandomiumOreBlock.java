@@ -1,10 +1,14 @@
 package net.mehvahdjukaar.randomium.common;
 
 import dev.architectury.injectables.annotations.PlatformOnly;
+import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -13,6 +17,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
@@ -68,14 +73,14 @@ public class RandomiumOreBlock extends Block {
                 percentage -= (le.getEffect(MobEffects.UNLUCK).getAmplifier()) * CommonConfigs.LUCK_MULTIPLIER.get();
             }
             if (tool != null) {
-                int fortune = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
+                int fortune = EnchantmentHelper.getItemEnchantmentLevel(holder(Enchantments.FORTUNE, world), tool);
                 percentage += CommonConfigs.FORTUNE_MULTIPLIER.get() * fortune;
             }
         }
 
         //world rng is better
         if (tool != null && CommonConfigs.ALLOW_SILK_TOUCH.get() &&
-                EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool) != 0) {
+                EnchantmentHelper.getItemEnchantmentLevel(holder(Enchantments.SILK_TOUCH, world), tool) != 0) {
             loot = new ItemStack(this.asItem());
         } else if (world.random.nextFloat() * 100 <= percentage) {
             loot = new ItemStack(Randomium.RANDOMIUM_ITEM.get());
@@ -85,7 +90,12 @@ public class RandomiumOreBlock extends Block {
         return Collections.singletonList(loot);
     }
 
-    @PlatformOnly(PlatformOnly.FORGE)
+    private static Holder<Enchantment> holder(ResourceKey<Enchantment> key, Level level) {
+        return level.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
+                .getHolder(key).orElseThrow(() -> new IllegalStateException("Enchantment " + key + " not found!"));
+    }
+
+    @ForgeOverride
     public int getExpDrop(BlockState state, LevelReader world, BlockPos pos, int fortune, int silktouch) {
         return silktouch == 0 ? Mth.nextInt(world instanceof Level l ? l.getRandom() : RANDOM, 0, 6) : 0;
     }
@@ -145,7 +155,7 @@ public class RandomiumOreBlock extends Block {
     @Override
     public void attack(BlockState state, Level world, BlockPos pos, Player entity) {
         ItemStack tool = entity.getUseItem();
-        int i = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, tool);
+        int i = EnchantmentHelper.getItemEnchantmentLevel(holder(Enchantments.SILK_TOUCH, world), tool);
         double c = i != 0 ? CommonConfigs.SILK_TOUCH_MULTIPLIER.get() : 1;
         this.excite(state, world, pos, c * CommonConfigs.EXCITE_ON_ATTACK_CHANCE.get());
     }
@@ -282,7 +292,7 @@ public class RandomiumOreBlock extends Block {
     }
 
     //@Override
-    @PlatformOnly(PlatformOnly.FORGE)
+    @ForgeOverride
     public int getLightEmission(BlockState state, BlockGetter world, BlockPos pos) {
         if (state.getValue(LIT)) {
             return this.getBlockRandom(pos).nextInt(10) + 5;

@@ -1,18 +1,16 @@
 package net.mehvahdjukaar.randomium.neoforge;
 
 import net.mehvahdjukaar.randomium.common.items.RandomiumItem;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 
-@Mod.EventBusSubscriber(modid = RandomiumForge.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = RandomiumForge.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME)
 public class RandomiumForgeClient {
 
     @SubscribeEvent
-    public static void test(TickEvent.ClientTickEvent tickEvent) {
-        if (tickEvent.phase == TickEvent.Phase.END) {
+    public static void test(ClientTickEvent.Post tickEvent) {
             RandomiumItem.tickEffects();
-        }
     }
 }

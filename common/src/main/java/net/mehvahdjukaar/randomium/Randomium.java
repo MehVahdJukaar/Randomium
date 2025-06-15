@@ -19,6 +19,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
@@ -131,7 +132,7 @@ public class Randomium {
             }
             LOOT.addAll(temp.values());
             //lucky
-            LOOT.add(Collections.singletonList(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.LUCK)));
+            LOOT.add(Collections.singletonList(PotionContents.createItemStack(Items.POTION, Potions.LUCK)));
         } else {
             BuiltInRegistries.ITEM.getTagOrEmpty(WHITELIST).forEach(i -> LOOT.add(Collections.singletonList(i.value().getDefaultInstance())));
         }

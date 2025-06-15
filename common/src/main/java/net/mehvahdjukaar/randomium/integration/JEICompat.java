@@ -34,7 +34,7 @@ public class JEICompat implements IModPlugin {
 
     @Override
     public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
-        registration.getCraftingCategory().addExtension(RandomiumDuplicateRecipe.class, DuplicateRecipeExtension::new);
+        registration.getCraftingCategory().addExtension(RandomiumDuplicateRecipe.class, new DuplicateRecipeExtension());
     }
 
     @Override
@@ -45,8 +45,7 @@ public class JEICompat implements IModPlugin {
     }
 
 
-    private record DuplicateRecipeExtension(
-            RandomiumDuplicateRecipe recipe) implements ICraftingCategoryExtension<CraftingRecipe> {
+    private record DuplicateRecipeExtension() implements ICraftingCategoryExtension<CraftingRecipe> {
 
         @Override
         public void drawInfo(RecipeHolder<CraftingRecipe> recipe, int recipeWidth, int recipeHeight, GuiGraphics guiGraphics, double mouseX, double mouseY) {

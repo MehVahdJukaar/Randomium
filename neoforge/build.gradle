@@ -102,4 +102,6 @@ dependencies {
     modCompileOnly ("curse.maven:jei-238222:6600227")
     modCompileOnly("curse.maven:roughly-enough-items-310111:4951142")
 
+    modImplementation("curse.maven:emi-580555:5704405")
+
 }
