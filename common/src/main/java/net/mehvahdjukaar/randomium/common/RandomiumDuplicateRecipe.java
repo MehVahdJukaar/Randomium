@@ -5,6 +5,7 @@ import net.mehvahdjukaar.randomium.RandomiumPlatStuff;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.tags.TagLoader;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -27,20 +28,16 @@ public class RandomiumDuplicateRecipe extends CustomRecipe {
     private boolean canBeDuplicated(ItemStack stack) {
 
         if (RandomiumPlatStuff.hasCapability(stack)) return false;
-        if (stack.getComponents().stream()
+        if(stack.is(Randomium.BLACKLIST)) return false;
+        return stack.getComponents().stream()
                 .map(c -> BuiltInRegistries.DATA_COMPONENT_TYPE.wrapAsHolder(c.type()))
-                .anyMatch(h -> h.is(Randomium.COMPONENT_BLACKLIST))
-        ) {
-            return false;
-        }
-        return !stack.is(Randomium.BLACKLIST);
+                .noneMatch(h -> h.is(Randomium.COMPONENT_BLACKLIST));
     }
 
     @Override
     public boolean matches(CraftingInput inv, Level level) {
         ItemStack toDuplicate = null;
         ItemStack randomium = null;
-
         for (int i = 0; i < inv.size(); ++i) {
             ItemStack stack = inv.getItem(i);
             if (!stack.isEmpty()) {
@@ -69,9 +66,7 @@ public class RandomiumDuplicateRecipe extends CustomRecipe {
         for (int i = 0; i < inv.size(); ++i) {
             ItemStack stack = inv.getItem(i);
             if (!stack.isEmpty() && !isRandomium(stack) && canBeDuplicated(stack)) {
-                ItemStack s = stack.copy();
-                s.setCount(1);
-                return s;
+                return stack.copyWithCount(1);
             }
         }
         return ItemStack.EMPTY;

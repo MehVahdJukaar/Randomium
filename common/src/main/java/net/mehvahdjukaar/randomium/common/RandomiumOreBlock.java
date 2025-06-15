@@ -2,6 +2,7 @@ package net.mehvahdjukaar.randomium.common;
 
 import dev.architectury.injectables.annotations.PlatformOnly;
 import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
+import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

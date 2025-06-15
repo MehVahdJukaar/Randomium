@@ -8,6 +8,7 @@ import net.mehvahdjukaar.randomium.common.items.AnyItem;
 import net.mehvahdjukaar.randomium.common.items.RandomiumItem;
 import net.minecraft.Util;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -161,7 +162,7 @@ public class Randomium {
 
     public static final TagKey<Item> BLACKLIST = TagKey.create(Registries.ITEM, res("randomium_blacklist"));
     public static final TagKey<Item> WHITELIST = TagKey.create(Registries.ITEM, res("randomium_whitelist"));
-    public static final TagKey<DataComponentType<?>> COMPONENT_BLACKLIST = TagKey.create(Registries.DATA_COMPONENT_TYPE, res("randomium_whitelist"));
+    public static final TagKey<DataComponentType<?>> COMPONENT_BLACKLIST = TagKey.create(Registries.DATA_COMPONENT_TYPE, res("randomium_blacklist"));
 
     private static final Predicate<ItemStack> VALID_DROP = (i) -> {
         if (i.getItem() == Items.AIR) return false;
