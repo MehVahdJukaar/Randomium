@@ -105,7 +105,7 @@ public class RandomiumOreBlock extends Block {
         return Randomium.getRandomSound(RANDOM);
     }
 
-    @PlatformOnly(PlatformOnly.FORGE)
+    @ForgeOverride
     public SoundType getSoundType(BlockState state, LevelReader world, BlockPos pos, @Nullable Entity entity) {
         if (world instanceof Level level) {
             return Randomium.getRandomSound(level.random);
@@ -118,7 +118,7 @@ public class RandomiumOreBlock extends Block {
         return (float) Math.max(0, (RANDOM.nextGaussian() * 6 + 8));
     }
 
-    @PlatformOnly(PlatformOnly.FORGE)
+    @ForgeOverride
     public float getExplosionResistance(BlockState state, BlockGetter world, BlockPos pos, Explosion explosion) {
         if (world instanceof Level level) {
             return (float) Math.max(0, (level.random.nextGaussian() * 6 + 8));
@@ -171,7 +171,7 @@ public class RandomiumOreBlock extends Block {
 
                 Direction dir = CommonConfigs.getRandomDir(world.random);
 
-                if (dir == null) {
+                if (dir == null || true) {
                     this.teleport(state, (ServerLevel) world, pos);
                 } else {
                     this.move(state, world, pos, dir);
@@ -182,47 +182,16 @@ public class RandomiumOreBlock extends Block {
         }
     }
 
-    @Override
-    public boolean triggerEvent(BlockState state, Level world, BlockPos end, int eventID, int eventParam) {
-        if (eventID == 0) {
-            RandomSource random = world.random;
-            //smort
-            int dx = (eventParam & 255) - 64;
-            int dy = (eventParam >> 8 & 255) - 64;
-            int dz = (eventParam >> 16 & 255) - 64;
-            BlockPos start = new BlockPos(end.getX() - dx, end.getY() - dy, end.getZ() - dz);
-            for (int j = 0; j < 64; ++j) {
-                double d0 = random.nextDouble();
-                float f = (random.nextFloat() - 0.5F) * 0.2F;
-                float f1 = (random.nextFloat() - 0.5F) * 0.2F;
-                float f2 = (random.nextFloat() - 0.5F) * 0.2F;
-                double d1 = Mth.lerp(d0, end.getX(), start.getX()) + (random.nextDouble() - 0.5D) + 0.5D;
-                double d2 = Mth.lerp(d0, end.getY(), start.getY()) + random.nextDouble() - 0.5D;
-                double d3 = Mth.lerp(d0, end.getZ(), start.getZ()) + (random.nextDouble() - 0.5D) + 0.5D;
-                world.addParticle(ParticleTypes.PORTAL, d1, d2, d3, f, f1, f2);
-            }
-            return true;
-        }
-        return super.triggerEvent(state, world, end, eventID, eventParam);
-    }
-
     private void teleport(BlockState state, ServerLevel world, BlockPos pos) {
         final int range = 7;
-        for (int i = 0; i < 1000; ++i) {
-            BlockPos blockpos = pos.offset(world.random.nextInt(range) - world.random.nextInt(range), world.random.nextInt(range / 2) - world.random.nextInt(range / 2), world.random.nextInt(range) - world.random.nextInt(range));
-            if (world.getBlockState(blockpos).isAir()) {
-
-                int dx = (byte) (blockpos.getX() - pos.getX()) + 64;
-                int dy = (byte) (blockpos.getY() - pos.getY()) + 64;
-                int dz = (byte) (blockpos.getZ() - pos.getZ()) + 64;
-
-                world.setBlock(blockpos, state, 2);
+        for (int i = 0; i < 400; ++i) {
+            BlockPos targetPos = pos.offset(world.random.nextInt(range) - world.random.nextInt(range), world.random.nextInt(range / 2) - world.random.nextInt(range / 2), world.random.nextInt(range) - world.random.nextInt(range));
+            if (world.getBlockState(targetPos).isAir()) {
+                world.setBlock(targetPos, state, 2);
                 world.removeBlock(pos, false);
 
-
-                world.blockEvent(blockpos, this, 0, (dz & 255) << 16 | (dy & 255) << 8 | dx & 255);
-
-
+                NetworkHelper.sendToAllClientPlayersInParticleRange(world,
+                        pos, new ModNetwork.ClientBoundTeleportParticleMessage(pos, targetPos));
                 return;
             }
         }

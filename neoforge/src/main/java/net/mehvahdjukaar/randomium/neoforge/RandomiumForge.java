@@ -1,6 +1,7 @@
 package net.mehvahdjukaar.randomium.neoforge;
 
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
+import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
@@ -17,7 +18,7 @@ public class RandomiumForge {
     public static final String MOD_ID = Randomium.MOD_ID;
 
     public RandomiumForge(IEventBus bus) {
-
+        RegHelper.startRegisteringFor(bus);
         Randomium.commonInit();
 
         NeoForge.EVENT_BUS.register(this);

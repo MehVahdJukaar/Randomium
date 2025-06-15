@@ -3,10 +3,7 @@ package net.mehvahdjukaar.randomium;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
-import net.mehvahdjukaar.randomium.common.CommonConfigs;
-import net.mehvahdjukaar.randomium.common.MovingBlockEntity;
-import net.mehvahdjukaar.randomium.common.RandomiumDuplicateRecipe;
-import net.mehvahdjukaar.randomium.common.RandomiumOreBlock;
+import net.mehvahdjukaar.randomium.common.*;
 import net.mehvahdjukaar.randomium.common.items.AnyItem;
 import net.mehvahdjukaar.randomium.common.items.RandomiumItem;
 import net.minecraft.Util;
@@ -84,6 +81,7 @@ public class Randomium {
 
     public static void commonInit() {
         CommonConfigs.init();
+        ModNetwork.init();
 
         PlatHelper.addCommonSetup(Randomium::commonSetup);
         if (PlatHelper.getPhysicalSide().isClient()) {

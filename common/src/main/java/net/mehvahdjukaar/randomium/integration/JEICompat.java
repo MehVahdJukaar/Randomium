@@ -11,6 +11,7 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.randomium.Randomium;
+import net.mehvahdjukaar.randomium.common.RandomiumDuplicateRecipe;
 import net.mehvahdjukaar.randomium.common.items.AnyItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -33,7 +34,7 @@ public class JEICompat implements IModPlugin {
 
     @Override
     public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
-        registration.getCraftingCategory().addExtension(CraftingRecipe.class, new DuplicateRecipeExtension());
+        registration.getCraftingCategory().addExtension(RandomiumDuplicateRecipe.class, new DuplicateRecipeExtension());
     }
 
     @Override
@@ -44,15 +45,12 @@ public class JEICompat implements IModPlugin {
         }
     }
 
-    static final ResourceLocation TARGET = Randomium.res("duplicate");
-
-    private record DuplicateRecipeExtension() implements ICraftingCategoryExtension<CraftingRecipe> {
+    //TODO: FIX
+    private static class DuplicateRecipeExtension implements ICraftingCategoryExtension<CraftingRecipe> {
 
         @Override
         public void drawInfo(RecipeHolder<CraftingRecipe> recipe, int recipeWidth, int recipeHeight, GuiGraphics guiGraphics, double mouseX, double mouseY) {
-            if (recipe.id().equals(TARGET)) {
-                guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable("randomium.jei.duplicate"), 60, 46, 5592405);
-            }
+            guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable("randomium.jei.duplicate"), 60, 46, 5592405);
         }
 
         @Override
