@@ -145,7 +145,7 @@ public class Randomium {
 
     //tabs arent even ready in mod setup...
     public static void populateLoot(Level level) {
-        if (level.isClientSide) return;
+        //RUN ON BOTH SIDES!
         if (!CreativeModeTabs.getDefaultTab().hasAnyItems()) {
             CreativeModeTabs.tryRebuildTabContents(level.enabledFeatures(), false, level.registryAccess());
         }
