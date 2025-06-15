@@ -104,11 +104,6 @@ public class Randomium {
             var sound = block.defaultBlockState().getSoundType();
             if (!SOUNDS.contains(sound)) SOUNDS.add(sound);
         }
-
-        SHUFFLED_ANY_ITEM.clear();
-        SHUFFLED_ANY_ITEM.addAll(LOOT.stream().map(List::getFirst).toList());
-        Collections.shuffle(SHUFFLED_ANY_ITEM);
-
     }
 
     //tabs arent even ready in mod setup...
@@ -135,6 +130,10 @@ public class Randomium {
         } else {
             BuiltInRegistries.ITEM.getTagOrEmpty(WHITELIST).forEach(i -> LOOT.add(Collections.singletonList(i.value().getDefaultInstance())));
         }
+
+        SHUFFLED_ANY_ITEM.clear();
+        SHUFFLED_ANY_ITEM.addAll(LOOT.stream().map(List::getFirst).toList());
+        Collections.shuffle(SHUFFLED_ANY_ITEM);
     }
 
 
@@ -147,10 +146,10 @@ public class Randomium {
     }
 
     public static ItemStack getAnyItem() {
-        int size = Randomium.SHUFFLED_ANY_ITEM.size();
+        int size = SHUFFLED_ANY_ITEM.size();
         if (size == 0) return Items.DIAMOND.getDefaultInstance();
         int time = (int) (Util.getMillis() / 500L);
-        return Randomium.SHUFFLED_ANY_ITEM.get(time % size);
+        return SHUFFLED_ANY_ITEM.get(time % size);
     }
 
     public static SoundType getRandomSound(RandomSource random) {
