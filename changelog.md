@@ -1,1 +1,1 @@
-added more configs
+fixed neo error

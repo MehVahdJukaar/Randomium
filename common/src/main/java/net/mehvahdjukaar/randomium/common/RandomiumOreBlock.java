@@ -172,7 +172,7 @@ public class RandomiumOreBlock extends Block {
 
                 Direction dir = CommonConfigs.getRandomDir(world.random);
 
-                if (dir == null || true) {
+                if (dir == null) {
                     this.teleport(state, (ServerLevel) world, pos);
                 } else {
                     this.move(state, world, pos, dir);
