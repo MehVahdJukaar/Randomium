@@ -3,6 +3,7 @@ package net.mehvahdjukaar.randomium;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.randomium.client.DuplicateItemRenderer;
 import net.mehvahdjukaar.randomium.client.MovingBlockEntityRenderer;
+import net.minecraft.world.level.block.Blocks;
 
 public class RandomiumClient {
 
