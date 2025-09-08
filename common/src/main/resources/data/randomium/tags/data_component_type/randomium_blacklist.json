@@ -9,6 +9,7 @@
     "minecraft:bundle_contents",
     "minecraft:bucket_entity_data",
     {"id": "supplementaries:lunch_basket_content", "required": false},
+    {"id": "create:minecart_contraption_data", "required": false},
     {"id": "supplementaries:quiver_content", "required": false},
     {"id": "supplementaries:mob_holder_content", "required": false}
   ]

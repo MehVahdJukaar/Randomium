@@ -18,6 +18,8 @@
     {"id": "create:creative_fluid_tank", "required": false},
     {"id": "create:creative_crate", "required": false},
     {"id": "create:handheld_worldshaper", "required": false},
+    {"id": "create:handheld_world_shaper", "required": false},
+    {"id": "create:minecart_contraption", "required": false},
     {"id": "create:copper_backtank_placeable", "required": false},
     {"id": "create:netherite_backtank_placeable", "required": false},
     {"id": "create:creative_blaze_cake", "required": false}
