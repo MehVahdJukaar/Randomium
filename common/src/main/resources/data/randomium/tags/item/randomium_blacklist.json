@@ -14,6 +14,8 @@
     "minecraft:structure_block",
     "minecraft:structure_void",
     {"id": "ae2things:ae2_mega_things", "required": false},
+    {"id": "#ae2_mega_things:cells", "required": false},
+    {"id": "#ae2things:cells", "required": false},
     {"id": "computercraft:computer_command", "required": false},
     {"id": "create:creative_motor", "required": false},
     {"id": "create:creative_fluid_tank", "required": false},

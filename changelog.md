@@ -1,1 +1,1 @@
-bumped allowed verison
+added more tags
