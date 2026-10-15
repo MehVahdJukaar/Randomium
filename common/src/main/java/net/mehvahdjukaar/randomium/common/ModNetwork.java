@@ -37,7 +37,7 @@ public class ModNetwork {
         @Override
         public void handle(Context context) {
             var level = context.getPlayer().level();
-            var random = level.random;
+            var random = level.getRandom();
             for (int j = 0; j < 64; ++j) {
                 double position = random.nextDouble();
                 float speedX = (random.nextFloat() - 0.5F) * 0.2F;

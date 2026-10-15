@@ -5,8 +5,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 
-import java.util.List;
+import java.util.function.Consumer;
 import java.util.Random;
 
 
@@ -16,10 +17,10 @@ public class RandomiumItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> text, TooltipFlag tooltipFlag) {
-        text.add((Component.translatable("message.randomium.description"))
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> text, TooltipFlag tooltipFlag) {
+        text.accept((Component.translatable("message.randomium.description"))
                 .withStyle(ChatFormatting.DARK_PURPLE));
-        super.appendHoverText(stack, context, text, tooltipFlag);
+        super.appendHoverText(stack, context, display, text, tooltipFlag);
     }
 
     //TODO: use this for trollium
@@ -36,9 +37,9 @@ public class RandomiumItem extends Item {
     private static final String OBFUSCATE_TEXT = "" + ChatFormatting.OBFUSCATED + "asfoiz";
 
     @Override
-    public String getDescriptionId() {
+    public Component getName(ItemStack stack) {
         IS_RENDERING_TOOLTIP = true;
-        return crazy ? OBFUSCATE_TEXT : super.getDescriptionId();
+        return crazy ? Component.literal(OBFUSCATE_TEXT) : super.getName(stack);
     }
 
     private static int MIN_COOLDOWN = 0;

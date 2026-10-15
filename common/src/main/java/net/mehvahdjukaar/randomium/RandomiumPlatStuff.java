@@ -1,12 +1,13 @@
 package net.mehvahdjukaar.randomium;
 
 import net.mehvahdjukaar.candlelight.api.PlatformImpl;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 
 public class RandomiumPlatStuff {
 
     @PlatformImpl
-    public static String getModId(ItemStack s) {
+    public static String getModId(HolderLookup.Provider registries, ItemStack s) {
         throw new AssertionError();
     }
 

@@ -2,24 +2,23 @@ package net.mehvahdjukaar.randomium.common;
 
 import net.mehvahdjukaar.randomium.Randomium;
 import net.mehvahdjukaar.randomium.RandomiumPlatStuff;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.tags.TagLoader;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 
 public class RandomiumDuplicateRecipe extends CustomRecipe {
 
-
-    public RandomiumDuplicateRecipe(CraftingBookCategory craftingBookCategory) {
-        super(craftingBookCategory);
-    }
 
     private boolean isRandomium(ItemStack stack) {
         return stack.getItem() == Randomium.RANDOMIUM_ITEM.get();
@@ -62,7 +61,7 @@ public class RandomiumDuplicateRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registries) {
+    public ItemStack assemble(CraftingInput inv) {
         for (int i = 0; i < inv.size(); ++i) {
             ItemStack stack = inv.getItem(i);
             if (!stack.isEmpty() && !isRandomium(stack) && canBeDuplicated(stack)) {
@@ -89,12 +88,15 @@ public class RandomiumDuplicateRecipe extends CustomRecipe {
     }
 
     @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return width * height >= 2;
+    public List<RecipeDisplay> display() {
+        SlotDisplay anyItem = new SlotDisplay.ItemSlotDisplay(Randomium.DUPLICATE_ITEM.get());
+        return List.of(new ShapelessCraftingRecipeDisplay(
+                List.of(new SlotDisplay.ItemSlotDisplay(Randomium.RANDOMIUM_ITEM.get()), anyItem),
+                anyItem, new SlotDisplay.ItemSlotDisplay(Items.CRAFTING_TABLE)));
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<RandomiumDuplicateRecipe> getSerializer() {
         return Randomium.RANDOMIUM_CLONE_RECIPE.get();
     }
 }

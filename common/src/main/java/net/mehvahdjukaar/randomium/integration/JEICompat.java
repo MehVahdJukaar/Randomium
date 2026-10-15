@@ -2,33 +2,27 @@ package net.mehvahdjukaar.randomium.integration;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.constants.RecipeTypes;
-import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
-import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
-import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
-import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.mehvahdjukaar.randomium.common.RandomiumDuplicateRecipe;
-import net.mehvahdjukaar.randomium.common.items.AnyItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 
 import java.util.List;
 
 @JeiPlugin
 public class JEICompat implements IModPlugin {
 
-    private static final ResourceLocation ID = Randomium.res("jei_plugin");
+    private static final Identifier ID = Randomium.res("jei_plugin");
 
     @Override
-    public ResourceLocation getPluginUid() {
+    public Identifier getPluginUid() {
         return ID;
     }
 
@@ -37,25 +31,16 @@ public class JEICompat implements IModPlugin {
         registration.getCraftingCategory().addExtension(RandomiumDuplicateRecipe.class, new DuplicateRecipeExtension());
     }
 
-    @Override
-    public void registerRecipes(IRecipeRegistration registry) {
-        if (!PlatHelper.isModLoaded("roughly_enough_items")) {
-            RecipeHolder<CraftingRecipe> duplicateRecipe = AnyItem.createDuplicateRecipe();
-            registry.addRecipes(RecipeTypes.CRAFTING, List.of(duplicateRecipe));
-        }
-    }
-
-    //TODO: FIX
-    private static class DuplicateRecipeExtension implements ICraftingCategoryExtension<CraftingRecipe> {
+    private static class DuplicateRecipeExtension implements ICraftingCategoryExtension<RandomiumDuplicateRecipe> {
 
         @Override
-        public void drawInfo(RecipeHolder<CraftingRecipe> recipe, int recipeWidth, int recipeHeight, GuiGraphics guiGraphics, double mouseX, double mouseY) {
-            guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable("randomium.jei.duplicate"), 60, 46, 5592405);
+        public List<SlotDisplay> getIngredients(RecipeHolder<RandomiumDuplicateRecipe> recipeHolder) {
+            return ((ShapelessCraftingRecipeDisplay) recipeHolder.value().display().getFirst()).ingredients();
         }
 
         @Override
-        public void setRecipe(RecipeHolder<CraftingRecipe> recipeHolder, IRecipeLayoutBuilder
-                builder, ICraftingGridHelper craftingGridHelper, IFocusGroup focuses) {
+        public void drawInfo(RecipeHolder<RandomiumDuplicateRecipe> recipe, int recipeWidth, int recipeHeight, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+            guiGraphics.text(Minecraft.getInstance().font, Component.translatable("randomium.jei.duplicate"), 60, 46, 0xFF555555, true);
         }
     }
 }

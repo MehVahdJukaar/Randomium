@@ -2,7 +2,7 @@ package net.mehvahdjukaar.randomium.platform;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLevelEvents;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.randomium.Randomium;
@@ -18,7 +18,7 @@ public class RandomiumFabric implements ModInitializer {
         Randomium.commonInit();
 
         PlatHelper.addCommonSetup(RandomiumFabric::commonSetup);
-        ServerWorldEvents.LOAD.register((s, l) -> Randomium.populateLoot(l));
+        ServerLevelEvents.LOAD.register((s, l) -> Randomium.populateLoot(l));
     }
 
     private static void commonSetup() {

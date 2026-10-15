@@ -22,14 +22,8 @@
     "modmenu": [
       "net.mehvahdjukaar.randomium.modMenu.ModMenuCompat"
     ],
-    "rei_client": [
-      "net.mehvahdjukaar.randomium.integration.REICompat"
-    ],
     "jei_mod_plugin": [
       "net.mehvahdjukaar.randomium.integration.JEICompat"
-    ],
-    "emi": [
-      "net.mehvahdjukaar.randomium.integration.EMICompat"
     ]
   },
   "mixins": [

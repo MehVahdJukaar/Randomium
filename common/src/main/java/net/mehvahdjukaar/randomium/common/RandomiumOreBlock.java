@@ -1,6 +1,5 @@
 package net.mehvahdjukaar.randomium.common;
 
-import net.mehvahdjukaar.moonlight.api.misc.ForgeOverride;
 import net.mehvahdjukaar.moonlight.api.platform.network.NetworkHelper;
 import net.mehvahdjukaar.randomium.Randomium;
 import net.minecraft.core.BlockPos;
@@ -16,6 +15,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -23,14 +23,17 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.RedstoneTorchBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +46,7 @@ public class RandomiumOreBlock extends Block {
 
     public static final BooleanProperty LIT = RedstoneTorchBlock.LIT;
 
-    private static final RandomSource RANDOM = RandomSource.createNewThreadLocalInstance();
+    private static final RandomSource RANDOM = RandomSource.createThreadLocalInstance();
 
     public RandomiumOreBlock(Properties properties) {
         super(properties.lightLevel(s -> s.getValue(LIT) ? 4 : 0));
@@ -61,7 +64,7 @@ public class RandomiumOreBlock extends Block {
                 builder.getOptionalParameter(LootContextParams.THIS_ENTITY));
     }
 
-    public List<ItemStack> getRandomDrops(BlockState state, Level world, @Nullable ItemStack tool, @Nullable Entity entity) {
+    public List<ItemStack> getRandomDrops(BlockState state, Level world, @Nullable ItemInstance tool, @Nullable Entity entity) {
 
         ItemStack loot;
         double percentage = CommonConfigs.BASE_DROP_CHANCE.get();
@@ -82,22 +85,23 @@ public class RandomiumOreBlock extends Block {
         if (tool != null && CommonConfigs.ALLOW_SILK_TOUCH.get() &&
                 EnchantmentHelper.getItemEnchantmentLevel(holder(Enchantments.SILK_TOUCH, world), tool) != 0) {
             loot = new ItemStack(this.asItem());
-        } else if (world.random.nextFloat() * 100 <= percentage) {
+        } else if (world.getRandom().nextFloat() * 100 <= percentage) {
             loot = new ItemStack(Randomium.RANDOMIUM_ITEM.get());
         } else {
-            loot = Randomium.getRandomItem(world, world.random);
+            loot = Randomium.getRandomItem(world, world.getRandom());
         }
         return Collections.singletonList(loot);
     }
 
     private static Holder<Enchantment> holder(ResourceKey<Enchantment> key, Level level) {
-        return level.registryAccess().registryOrThrow(Registries.ENCHANTMENT)
-                .getHolder(key).orElseThrow(() -> new IllegalStateException("Enchantment " + key + " not found!"));
+        return level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT)
+                .get(key).orElseThrow(() -> new IllegalStateException("Enchantment " + key + " not found!"));
     }
 
-    @ForgeOverride
-    public int getExpDrop(BlockState state, LevelReader world, BlockPos pos, int fortune, int silktouch) {
-        return silktouch == 0 ? Mth.nextInt(world instanceof Level l ? l.getRandom() : RANDOM, 0, 6) : 0;
+    public int getExpDrop(BlockState state, LevelAccessor level, BlockPos pos, @Nullable BlockEntity blockEntity,
+                          @Nullable Entity breaker, ItemStack tool) {
+        boolean silkTouched = level instanceof Level l && EnchantmentHelper.getItemEnchantmentLevel(holder(Enchantments.SILK_TOUCH, l), tool) != 0;
+        return silkTouched ? 0 : Mth.nextInt(level.getRandom(), 0, 6);
     }
 
     @Override
@@ -105,10 +109,9 @@ public class RandomiumOreBlock extends Block {
         return Randomium.getRandomSound(RANDOM);
     }
 
-    @ForgeOverride
     public SoundType getSoundType(BlockState state, LevelReader world, BlockPos pos, @Nullable Entity entity) {
         if (world instanceof Level level) {
-            return Randomium.getRandomSound(level.random);
+            return Randomium.getRandomSound(level.getRandom());
         }
         return getSoundType(state);
     }
@@ -118,10 +121,9 @@ public class RandomiumOreBlock extends Block {
         return (float) Math.max(0, (RANDOM.nextGaussian() * 6 + 8));
     }
 
-    @ForgeOverride
     public float getExplosionResistance(BlockState state, BlockGetter world, BlockPos pos, Explosion explosion) {
         if (world instanceof Level level) {
-            return (float) Math.max(0, (level.random.nextGaussian() * 6 + 8));
+            return (float) Math.max(0, (level.getRandom().nextGaussian() * 6 + 8));
         }
         return getExplosionResistance();
     }
@@ -140,7 +142,7 @@ public class RandomiumOreBlock extends Block {
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos, Direction direction) {
         return this.getBlockRandom(pos).nextInt(16);
     }
 
@@ -161,22 +163,22 @@ public class RandomiumOreBlock extends Block {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos, boolean moving) {
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, @Nullable Orientation orientation, boolean moving) {
         this.excite(state, world, pos, CommonConfigs.EXCITE_ON_BLOCK_UPDATE_CHANCE.get());
     }
 
     public void excite(BlockState state, Level world, BlockPos pos, double chance) {
-        if (!world.isClientSide) {
-            if (world.random.nextFloat() < chance / 100f) {
+        if (!world.isClientSide()) {
+            if (world.getRandom().nextFloat() < chance / 100f) {
 
-                Direction dir = CommonConfigs.getRandomDir(world.random);
+                Direction dir = CommonConfigs.getRandomDir(world.getRandom());
 
                 if (dir == null) {
                     this.teleport(state, (ServerLevel) world, pos);
                 } else {
                     this.move(state, world, pos, dir);
                 }
-            } else if (world.random.nextInt(5) == 0) {
+            } else if (world.getRandom().nextInt(5) == 0) {
                 this.lightUp(state, world, pos);
             }
         }
@@ -185,7 +187,7 @@ public class RandomiumOreBlock extends Block {
     private void teleport(BlockState state, ServerLevel world, BlockPos pos) {
         final int range = 7;
         for (int i = 0; i < 400; ++i) {
-            BlockPos targetPos = pos.offset(world.random.nextInt(range) - world.random.nextInt(range), world.random.nextInt(range / 2) - world.random.nextInt(range / 2), world.random.nextInt(range) - world.random.nextInt(range));
+            BlockPos targetPos = pos.offset(world.getRandom().nextInt(range) - world.getRandom().nextInt(range), world.getRandom().nextInt(range / 2) - world.getRandom().nextInt(range / 2), world.getRandom().nextInt(range) - world.getRandom().nextInt(range));
             if (world.getBlockState(targetPos).isAir()) {
                 world.setBlock(targetPos, state, 2);
                 world.removeBlock(pos, false);
@@ -208,7 +210,7 @@ public class RandomiumOreBlock extends Block {
 
     @Override
     public void stepOn(Level pLevel, BlockPos pPos, BlockState pState, Entity pEntity) {
-        if (pLevel.random.nextInt(5) == 0)
+        if (pLevel.getRandom().nextInt(5) == 0)
             lightUp(pLevel.getBlockState(pPos), pLevel, pPos);
         super.stepOn(pLevel, pPos, pState, pEntity);
     }
@@ -243,12 +245,12 @@ public class RandomiumOreBlock extends Block {
     //todo: add custom ones
     //redstone ore stuff
     private static void spawnParticles(Level world, BlockPos pos) {
-        RandomSource random = world.random;
+        RandomSource random = world.getRandom();
 
         for (Direction direction : Direction.values()) {
             if (random.nextInt(5) == 0) {
                 BlockPos blockpos = pos.relative(direction);
-                if (!world.getBlockState(blockpos).isSolidRender(world, blockpos)) {
+                if (!world.getBlockState(blockpos).isSolidRender()) {
                     Direction.Axis axis = direction.getAxis();
                     double d1 = axis == Direction.Axis.X ? 0.5D + 0.5625D * direction.getStepX() : random.nextFloat();
                     double d2 = axis == Direction.Axis.Y ? 0.5D + 0.5625D * direction.getStepY() : random.nextFloat();
@@ -261,7 +263,6 @@ public class RandomiumOreBlock extends Block {
     }
 
     //@Override
-    @ForgeOverride
     public int getLightEmission(BlockState state, BlockGetter world, BlockPos pos) {
         if (state.getValue(LIT)) {
             return this.getBlockRandom(pos).nextInt(10) + 5;

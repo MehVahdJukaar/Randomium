@@ -6,12 +6,12 @@ import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.mehvahdjukaar.randomium.common.*;
 import net.mehvahdjukaar.randomium.common.items.AnyItem;
 import net.mehvahdjukaar.randomium.common.items.RandomiumItem;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
@@ -20,7 +20,6 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -38,44 +37,41 @@ public class Randomium {
     public static final String MOD_ID = "randomium";
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public static ResourceLocation res(String name) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
+    public static Identifier res(String name) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, name);
     }
 
-    public static final Supplier<Block> RANDOMIUM_ORE = RegHelper.registerBlockWithItem(res("randomium_ore"), () ->
-            new RandomiumOreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)
+    public static final Supplier<Block> RANDOMIUM_ORE = RegHelper.registerBlockWithItem(res("randomium_ore"), RandomiumOreBlock::new,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)
                     .requiresCorrectToolForDrops()
-                    .strength(4.0F, 3.0F)));
+                    .strength(4.0F, 3.0F));
 
-    public static final Supplier<Block> RANDOMIUM_ORE_DEEP = RegHelper.registerBlockWithItem(res("randomium_ore_deepslate"), () ->
-            new RandomiumOreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)
+    public static final Supplier<Block> RANDOMIUM_ORE_DEEP = RegHelper.registerBlockWithItem(res("randomium_ore_deepslate"), RandomiumOreBlock::new,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)
                     .requiresCorrectToolForDrops()
-                    .strength(5.25F, 3.0F)));
+                    .strength(5.25F, 3.0F));
 
-    public static final Supplier<Block> RANDOMIUM_ORE_END = RegHelper.registerBlockWithItem(res("randomium_ore_end"), () ->
-            new RandomiumOreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.END_STONE)
+    public static final Supplier<Block> RANDOMIUM_ORE_END = RegHelper.registerBlockWithItem(res("randomium_ore_end"), RandomiumOreBlock::new,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.END_STONE)
                     .requiresCorrectToolForDrops()
-                    .strength(4.0F, 3.0F)));
+                    .strength(4.0F, 3.0F));
 
-    public static final Supplier<Item> RANDOMIUM_ITEM = RegHelper.registerItem(res("randomium"), () ->
-            new RandomiumItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final Supplier<Item> RANDOMIUM_ITEM = RegHelper.registerItem(res("randomium"), RandomiumItem::new,
+            new Item.Properties().rarity(Rarity.EPIC));
 
-    public static final Supplier<Item> DUPLICATE_ITEM = RegHelper.registerItem(Randomium.res("any_item"), () ->
-            new AnyItem(new Item.Properties()));
+    public static final Supplier<Item> DUPLICATE_ITEM = RegHelper.registerItem(Randomium.res("any_item"), AnyItem::new);
 
 
     public static final Supplier<EntityType<MovingBlockEntity>> MOVING_BLOCK_ENTITY = RegHelper.registerEntityType(
-            res("moving_block"), () ->
-                    EntityType.Builder.<MovingBlockEntity>of(MovingBlockEntity::new,
-                                    MobCategory.MISC)
-                            .sized(0.98F, 0.98F)
-                            .clientTrackingRange(10)
-                            .updateInterval(20)
-                            .build("moving_block"));
+            res("moving_block"),
+            EntityType.Builder.<MovingBlockEntity>of(MovingBlockEntity::new,
+                            MobCategory.MISC)
+                    .sized(0.98F, 0.98F)
+                    .clientTrackingRange(10)
+                    .updateInterval(20));
 
-    public static final Supplier<RecipeSerializer<?>> RANDOMIUM_CLONE_RECIPE = RegHelper.registerRecipeSerializer(
-            res("randomium_clone"), () ->
-                    new SimpleCraftingRecipeSerializer<>(RandomiumDuplicateRecipe::new));
+    public static final Supplier<RecipeSerializer<RandomiumDuplicateRecipe>> RANDOMIUM_CLONE_RECIPE = RegHelper.registerSpecialRecipe(
+            res("randomium_clone"), RandomiumDuplicateRecipe::new);
 
 
     public enum ListMode {BLACKLIST, WHITELIST}
@@ -170,11 +166,11 @@ public class Randomium {
         if (i.getItem() instanceof SpawnEggItem) return false;
 
         //should be covered by subsequent blacklist but better be sure
-        ResourceLocation reg = Utils.getID(i.getItem());
+        Identifier reg = Utils.getID(i.getItem());
         if (CommonConfigs.MOD_BLACKLIST.get().contains(reg.getNamespace())) return false;
 
         if (CommonConfigs.DROP_DEV_ITEMS.get()) return true;
-        if (BuiltInRegistries.CREATIVE_MODE_TAB.get(CreativeModeTabs.OP_BLOCKS).contains(i)) return false;
+        if (BuiltInRegistries.CREATIVE_MODE_TAB.getValueOrThrow(CreativeModeTabs.OP_BLOCKS).contains(i)) return false;
         String name = reg.getPath();
         return !name.contains("creative") && !name.contains("debug")
                 && !name.contains("developer") && !name.contains("dev_") && !name.contains("_dev");

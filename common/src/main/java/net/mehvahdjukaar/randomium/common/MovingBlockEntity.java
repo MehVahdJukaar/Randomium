@@ -6,9 +6,6 @@ import net.mehvahdjukaar.randomium.Randomium;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
@@ -22,12 +19,14 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Fallable;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 
 public class MovingBlockEntity extends FallingBlockEntity implements IExtraClientSpawnData {
@@ -84,16 +83,16 @@ public class MovingBlockEntity extends FallingBlockEntity implements IExtraClien
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag tag) { //this.entityData.get(DATA_FALL_DIRECTION)
-        super.addAdditionalSaveData(tag);
-        tag.putByte("GravityDirection", (byte) this.gravityDirection.get3DDataValue());
+    protected void addAdditionalSaveData(ValueOutput output) { //this.entityData.get(DATA_FALL_DIRECTION)
+        super.addAdditionalSaveData(output);
+        output.putByte("GravityDirection", (byte) this.gravityDirection.get3DDataValue());
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        this.gravityDirection = Direction.from3DDataValue(tag.getByte("GravityDirection"));
-        this.state = NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK),tag.getCompound("BlockState"));
+    protected void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.gravityDirection = Direction.from3DDataValue(input.getByteOr("GravityDirection", (byte) 0));
+        this.state = input.read("BlockState", BlockState.CODEC).orElse(Blocks.AIR.defaultBlockState());
     }
 
     @Override
@@ -107,20 +106,20 @@ public class MovingBlockEntity extends FallingBlockEntity implements IExtraClien
                 BlockPos blockpos = this.blockPosition();
                 if (level.getBlockState(blockpos).is(block)) {
                     level.removeBlock(blockpos, false);
-                } else if (!level.isClientSide) {
+                } else if (!level.isClientSide()) {
                     this.discard();
                     return;
                 }
             }
 
-            Vec3i n = this.gravityDirection.getNormal();
+            Vec3i n = this.gravityDirection.getUnitVec3i();
             if (!this.isNoGravity()) {
 
                 this.setDeltaMovement(this.getDeltaMovement().add(n.getX() * 0.04D, n.getY() * 0.04D, n.getZ() * 0.04D));
             }
 
             this.move(MoverType.SELF, this.getDeltaMovement());
-            if (!level.isClientSide) {
+            if (level instanceof ServerLevel serverLevel) {
                 BlockPos blockpos1 = this.blockPosition();
 
                 boolean collided = this.verticalCollision || this.horizontalCollision;
@@ -141,34 +140,34 @@ public class MovingBlockEntity extends FallingBlockEntity implements IExtraClien
                         if (flag2 && flag4) {
 
                             if (level.setBlock(blockpos1, this.state, 3)) {
-                                ((ServerLevel) level).getChunkSource().chunkMap.broadcast(this, new ClientboundBlockUpdatePacket(blockpos1, level.getBlockState(blockpos1)));
+                                serverLevel.getChunkSource().chunkMap.sendToTrackingPlayers(this, new ClientboundBlockUpdatePacket(blockpos1, level.getBlockState(blockpos1)));
                                 this.discard();
                                 if (block instanceof Fallable fallable) {
                                     fallable.onLand(level, blockpos1, this.state, blockstate, this);
                                 }
 
-                            } else if (this.dropItem && level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+                            } else if (this.dropItem && serverLevel.getGameRules().get(GameRules.ENTITY_DROPS)) {
                                 this.discard();
                                 this.callOnBrokenAfterFall(block, blockpos1);
-                                this.spawnAtLocation(block);
+                                this.spawnAtLocation(serverLevel, block);
                             }
                         } else {
                             this.discard();
-                            if (this.dropItem && level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+                            if (this.dropItem && serverLevel.getGameRules().get(GameRules.ENTITY_DROPS)) {
                                 this.callOnBrokenAfterFall(block, blockpos1);
-                                this.spawnAtLocation(block);
+                                this.spawnAtLocation(serverLevel, block);
                             }
                         }
                     }
                 } else {
-                    if (!level.isClientSide && (this.time > 100 && (blockpos1.getY() <= level.getMinBuildHeight() || blockpos1.getY() > level.getMaxBuildHeight()) || this.time > 600)) {
+                    if ((this.time > 100 && (blockpos1.getY() <= level.getMinY() || blockpos1.getY() > level.getMaxY()) || this.time > 600)) {
 
                         if (this.gravityDirection == Direction.UP) {
                             this.gravityDirection = Direction.DOWN;
                             this.time = 1;
                         } else {
-                            if (level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
-                                this.spawnAtLocation(block);
+                            if (serverLevel.getGameRules().get(GameRules.ENTITY_DROPS)) {
+                                this.spawnAtLocation(serverLevel, block);
                             }
 
                             this.discard();
