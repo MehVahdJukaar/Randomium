@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.randomium.neoforge;
+package net.mehvahdjukaar.randomium.platform;
 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;

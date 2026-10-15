@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.randomium.fabric;
+package net.mehvahdjukaar.randomium.platform;
 
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.world.item.ItemStack;

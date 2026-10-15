@@ -13,10 +13,11 @@
   },
   "license": "${mod_license}",
   "icon": "icon.png",
+  "accessWidener": "randomium.accesswidener",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.mehvahdjukaar.randomium.fabric.RandomiumFabric"
+      "net.mehvahdjukaar.randomium.platform.RandomiumFabric"
     ],
     "modmenu": [
       "net.mehvahdjukaar.randomium.modMenu.ModMenuCompat"
@@ -36,8 +37,8 @@
     "${mod_id}-common.mixins.json"
   ],
   "depends": {
-    "fabric": "*",
-    "minecraft": ">=${minecraft_min_version} <${minecraft_max_version}",
-    "moonlight": ">=${required_moonlight_version}"
+    "fabric-api": "*",
+    "minecraft": "=${minecraft_version}",
+    "moonlight": ">=${moonlight_min_version}"
   }
 }

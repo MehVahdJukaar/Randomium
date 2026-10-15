@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.randomium.neoforge;
+package net.mehvahdjukaar.randomium.platform;
 
 import net.mehvahdjukaar.randomium.common.items.RandomiumItem;
 import net.neoforged.bus.api.SubscribeEvent;

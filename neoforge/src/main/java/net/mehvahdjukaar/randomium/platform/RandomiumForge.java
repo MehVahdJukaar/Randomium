@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.randomium.neoforge;
+package net.mehvahdjukaar.randomium.platform;
 
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;

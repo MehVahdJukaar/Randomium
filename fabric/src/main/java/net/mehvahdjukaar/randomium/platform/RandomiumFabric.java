@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.randomium.fabric;
+package net.mehvahdjukaar.randomium.platform;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
